@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { Link, Tabs } from 'expo-router'
+import { Tabs } from 'expo-router'
 import { Pressable } from 'react-native'
+import { Drawer } from '@/components/drawer'
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name']
   color: string
@@ -12,28 +12,30 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
   return (
-    <Tabs>
-      <Tabs.Screen
-        name='index'
-        options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
-          headerRight: () => (
-            <Link href='/modal' asChild>
-              <Pressable>
+    <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+      <Tabs>
+        <Tabs.Screen
+          name='index'
+          options={{
+            title: 'Tab One',
+            tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
+            headerRight: () => (
+              <Pressable onPress={() => setIsDrawerOpen(true)}>
                 {({ pressed }) => (
                   <FontAwesome
-                    name='info-circle'
+                    name='bars' // Ícone de menu
                     size={25}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
               </Pressable>
-            </Link>
-          ),
-        }}
-      />
-    </Tabs>
+            ),
+          }}
+        />
+      </Tabs>
+    </Drawer>
   )
 }
