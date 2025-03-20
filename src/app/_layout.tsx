@@ -1,7 +1,5 @@
 import { Stack } from 'expo-router'
-
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-
 import {
   useFonts,
   Montserrat_400Regular,
