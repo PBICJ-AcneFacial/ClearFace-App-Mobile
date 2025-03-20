@@ -1,4 +1,5 @@
-import { StyleSheet } from "react-native";
+import { fontFamily } from '@/styles/theme'
+import { StyleSheet } from 'react-native'
 
 export const s = StyleSheet.create({
   flex1: { flex: 1 },
@@ -24,7 +25,11 @@ export const s = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
-  headerText: { fontSize: 18, fontWeight: 'bold' },
+  headerText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontFamily: fontFamily.semiBold,
+  },
   consultationItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',

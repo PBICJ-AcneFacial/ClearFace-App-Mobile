@@ -8,8 +8,9 @@ import {
   StyleSheet,
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
-import { Upload as ImageUp } from 'lucide-react-native'
+import { ImageUpIcon } from 'lucide-react-native'
 import { useLocalSearchParams } from 'expo-router'
+import { colors, fontFamily } from '@/styles/theme'
 
 export default function Home() {
   const { id } = useLocalSearchParams()
@@ -69,10 +70,10 @@ export default function Home() {
           onPress={previewImage === null ? pickImage : sendImage}
           style={styles.button}
         >
-          <Text style={styles.buttonText}>
+          <Text style={styles.buttonText} numberOfLines={1}>
             {previewImage ? previewImage.split('/').pop() : 'Adicionar Imagem'}
           </Text>
-          <ImageUp color='#fff' />
+          <ImageUpIcon color={colors.gray[50]} size={32} />
         </TouchableOpacity>
       </View>
     </View>
@@ -82,7 +83,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: colors.gray[200],
     padding: 16,
   },
   scrollView: {
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     alignSelf: 'flex-end',
-    backgroundColor: '#1F2937',
+    backgroundColor: colors.gray[900],
     padding: 8,
     borderRadius: 10,
     marginBottom: 8,
@@ -102,12 +103,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   uploadContainer: {
-    backgroundColor: '#1F2937',
+    backgroundColor: colors.gray[900],
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 24,
     paddingHorizontal: 12,
-    paddingVertical: 16,
+    paddingVertical: 12,
     gap: 16,
   },
   previewContainer: {
@@ -125,10 +126,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 12,
-    // backgroundColor: '#1E1E1E',
   },
   buttonText: {
-    color: '#fff',
-    marginRight: 8, // Adiciona um espaço entre o texto e o ícone
+    color: colors.gray[50],
+    marginRight: 8,
+    fontSize: 20,
+    fontFamily: fontFamily.regular,
+    maxWidth: 280,
   },
 })
