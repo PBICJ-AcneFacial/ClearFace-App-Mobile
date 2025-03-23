@@ -1,3 +1,4 @@
+import { router } from 'expo-router'
 import React, { useState } from 'react'
 import {
   Modal,
@@ -23,7 +24,7 @@ export function ProfileCard() {
       <TouchableOpacity
         style={styles.profileContainer}
         onPress={() => setDropdownOpen(true)}
-        onLayout={handleLayout} 
+        onLayout={handleLayout}
       >
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>IH</Text>
@@ -36,9 +37,7 @@ export function ProfileCard() {
         transparent
         visible={isDropdownOpen}
         animationType='slide'
-        
         onRequestClose={() => setDropdownOpen(false)}
-        
       >
         <TouchableOpacity
           style={styles.overlay}
@@ -61,7 +60,7 @@ export function ProfileCard() {
               <Text>📊 Overview</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.dropdownItem, styles.logout]}>
+            <TouchableOpacity onPress={() => router.navigate('/(auth)/login')} style={[styles.dropdownItem, styles.logout]}>
               <Text style={styles.logoutText}>🚪 Log out</Text>
             </TouchableOpacity>
           </View>
@@ -73,19 +72,13 @@ export function ProfileCard() {
 
 const styles = StyleSheet.create({
   profileContainer: {
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 15,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
     backgroundColor: '#fff',
     borderRadius: 10,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
   },
   avatar: {
     width: 40,
