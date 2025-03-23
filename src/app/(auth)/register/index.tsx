@@ -3,12 +3,12 @@ import { SubmitButton } from '@/components/ui/submit-button'
 import { router } from 'expo-router'
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { registerUser } from '@/services/http/auth/register-user'
 import {
   registerFormSchema,
   RegisterFormSchema,
 } from '@/validators/register-validators'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { registerUser } from '@/services/http/auth/register-user'
 
 export default function Register() {
   const {
