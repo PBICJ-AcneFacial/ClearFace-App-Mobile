@@ -1,14 +1,13 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { getAxiosStatusCode } from '@/functions'
 import { api } from '@/services/api'
 import { LoginFormSchema } from '@/validators/login-validators'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type LoginUserResponse = {
   Description: string
   token: string
 }
 
-export async function loginUser(
+export async function uploadImage(
   formData: LoginFormSchema
 ): Promise<LoginUserResponse> {
   try {
@@ -19,12 +18,6 @@ export async function loginUser(
 
     return data
   } catch (error) {
-    const statusCode = getAxiosStatusCode(error)
-
-    if (statusCode === 401) {
-      throw new Error('Invalid password')
-    }
-
     console.log(error)
     throw new Error('Login erro to user')
   }

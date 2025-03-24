@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { SubmitButton } from '@/components/ui/submit-button'
+import { getErrorMessage } from '@/functions'
 import { loginUser } from '@/services/http/auth/login-user'
 import { LoginFormSchema, loginFormSchema } from '@/validators/login-validators'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -25,7 +26,12 @@ export default function Login() {
       await loginUser(data)
       console.log(data)
       console.log('User logged')
-    } catch {}
+      router.navigate('/')
+    } catch (error) {
+      const errorMessage = getErrorMessage(error)
+
+      console.log(errorMessage)
+    }
   }
 
   return (
