@@ -17,12 +17,7 @@ export default function Layout() {
   })
 
   if (!fontsLoaded) {
-    console.log('fONTE NÃO CARREGOU')
     return <Loading />
-  }
-
-  if (fontsLoaded) {
-    console.log(fontsLoaded)
   }
 
   return (

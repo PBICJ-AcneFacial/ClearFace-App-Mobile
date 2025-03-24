@@ -5,7 +5,7 @@ import { Drawer } from '@/components/drawer'
 import { AlignLeft } from 'lucide-react-native'
 import { NewConsultationButton } from '@/components/new-consulation-button'
 
-export default function TabLayout() {
+export default function PrivateRoutesLayout() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   return (
