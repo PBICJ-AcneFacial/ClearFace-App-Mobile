@@ -6,11 +6,16 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  Alert,
+  ToastAndroid,
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { ImageUpIcon } from 'lucide-react-native'
 import { useLocalSearchParams } from 'expo-router'
 import { colors, fontFamily } from '@/styles/theme'
+import { uploadImage } from '@/services/http/images/upload-image'
+import { api } from '@/services/api'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Home() {
   const { id } = useLocalSearchParams()
@@ -20,18 +25,68 @@ export default function Home() {
   >([])
   const [previewImage, setPreviewImage] = React.useState<string | null>(null)
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [16, 9],
-      quality: 1,
-    })
+  const handlePickerImage = async () => {
+    const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if (!granted) {
+      Alert.alert(
+        'Permissão necessária',
+        'Permita que sua aplicação acesse as imagens'
+      )
+    } else {
+      const { assets, canceled } = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        mediaTypes: ['images'],
+        base64: false,
+        aspect: [4, 4],
+        quality: 1,
+      })
 
-    console.log(result)
+      if (canceled) {
+        ToastAndroid.show('Operação cancelada', ToastAndroid.SHORT)
+      } else {
+        const filename = assets[0].uri.substring(
+          assets[0].uri.lastIndexOf('/') + 1,
+          assets[0].uri.length
+        )
 
-    if (!result.canceled) {
-      setPreviewImage(result.assets[0].uri)
+        const extend = filename.split('.')[1]
+        const formData = new FormData()
+        formData.append(
+          'FaceImage',
+          JSON.parse(
+            JSON.stringify({
+              name: filename,
+              uri: assets[0].uri,
+              type: 'image/' + extend,
+            })
+          )
+        )
+        setPreviewImage(assets[0].uri)
+
+        try {
+          const token = await AsyncStorage.getItem('@token')
+          const response = await api.post('/images', formData, {
+            headers: {
+              // Accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          if (response.data.error) {
+            Alert.alert(
+              'Erro',
+              'Não foi possivel enviar sua imagem. Por favor, tente novamente mais tarde!'
+            )
+          } else {
+            Alert.alert('Sucesso 🎉', 'Sua imagem foi enviada com sucesso!')
+          }
+
+          console.log(response)
+        } catch (err) {
+          alert('Erro ao enviar sua imagem')
+          console.log(err)
+        }
+      }
     }
   }
 
@@ -67,7 +122,7 @@ export default function Home() {
           </View>
         )}
         <TouchableOpacity
-          onPress={previewImage === null ? pickImage : sendImage}
+          onPress={previewImage === null ? handlePickerImage : sendImage}
           style={styles.button}
         >
           <Text style={styles.buttonText} numberOfLines={1}>

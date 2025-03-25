@@ -1,5 +1,6 @@
+import { SummaryCard } from '@/components/overview/summary-card'
 import React from 'react'
-import { Text, View, Dimensions } from 'react-native'
+import { Text, View, Dimensions, StyleSheet, ScrollView } from 'react-native'
 import { LineChart } from 'react-native-chart-kit'
 
 export default function OverviewScreen() {
@@ -12,24 +13,15 @@ export default function OverviewScreen() {
   const width = Dimensions.get('window').width - 40
 
   return (
-    <View style={{ backgroundColor: '#F5F8FF', padding: 10 }}>
-      <Text
-        style={{
-          fontSize: 16,
-          fontWeight: 'bold',
-          textAlign: 'center',
-          marginBottom: 10,
-        }}
-      >
-        Evolução da Condição
-      </Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.title}>Evolução da Condição</Text>
 
-      <View style={{ flex: 1 }}>
+   
+
+      <View style={styles.chartContainer}>
         <LineChart
           data={{
-            labels: DATA.filter((_, i) => i % 3 === 0).map(
-              (d) => `${d.day} out`
-            ),
+            labels: DATA.filter((_, i) => i % 3 === 0).map((d) => `${d.day} out`),
             datasets: [{ data: DATA.map((d) => d.value) }],
           }}
           width={width}
@@ -42,20 +34,38 @@ export default function OverviewScreen() {
             decimalPlaces: 0,
             color: () => '#1E5AFF',
             labelColor: () => '#AAB2C8',
-            propsForDots: {
-              r: '2',
-              strokeWidth: '1',
-              stroke: '#1E5AFF',
-            },
-            propsForBackgroundLines: {
-              stroke: '#E5E8F0',
-              strokeDasharray: '5 5',
-            },
+            propsForDots: { r: '2', strokeWidth: '1', stroke: '#1E5AFF' },
+            propsForBackgroundLines: { stroke: '#E5E8F0', strokeDasharray: '5 5' },
           }}
           bezier
-          style={{ borderRadius: 10 }}
+          style={styles.chart}
         />
       </View>
-    </View>
+      <SummaryCard classification='moderada' />
+    </ScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F8FF',
+  },
+  content: {
+    alignItems: 'center',
+    padding: 10,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  chartContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  chart: {
+    borderRadius: 10,
+  },
+})
