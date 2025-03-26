@@ -11,19 +11,19 @@ import {
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { ImageUpIcon } from 'lucide-react-native'
-import { useLocalSearchParams } from 'expo-router'
 import { colors, fontFamily } from '@/styles/theme'
-import { uploadImage } from '@/services/http/images/upload-image'
 import { api } from '@/services/api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { createConsultation } from '@/services/http/consultations/create-consultation'
 
 export default function Home() {
-  const { id } = useLocalSearchParams()
+ 
 
   const [messages, setMessages] = React.useState<
     { type: 'image'; uri: string }[]
   >([])
   const [previewImage, setPreviewImage] = React.useState<string | null>(null)
+  const [imageId, setImageId] = React.useState('')
 
   const handlePickerImage = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -72,6 +72,10 @@ export default function Home() {
               Authorization: `Bearer ${token}`,
             },
           })
+
+          setImageId(response.data.image.id)
+         
+
           if (response.data.error) {
             Alert.alert(
               'Erro',
@@ -81,7 +85,6 @@ export default function Home() {
             Alert.alert('Sucesso 🎉', 'Sua imagem foi enviada com sucesso!')
           }
 
-          console.log(response)
         } catch (err) {
           alert('Erro ao enviar sua imagem')
           console.log(err)
@@ -90,10 +93,14 @@ export default function Home() {
     }
   }
 
-  function sendImage() {
+  async function sendImage() {
     if (previewImage) {
       setMessages((prev) => [...prev, { type: 'image', uri: previewImage }])
       setPreviewImage(null)
+
+      const response = await createConsultation(imageId)
+      console.log('Consulta criada!')
+      console.log(response)
     }
   }
 
