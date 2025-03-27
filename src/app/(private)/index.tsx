@@ -17,8 +17,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createConsultation } from '@/services/http/consultations/create-consultation'
 
 export default function Home() {
- 
-
   const [messages, setMessages] = React.useState<
     { type: 'image'; uri: string }[]
   >([])
@@ -74,7 +72,6 @@ export default function Home() {
           })
 
           setImageId(response.data.image.id)
-         
 
           if (response.data.error) {
             Alert.alert(
@@ -84,7 +81,6 @@ export default function Home() {
           } else {
             Alert.alert('Sucesso 🎉', 'Sua imagem foi enviada com sucesso!')
           }
-
         } catch (err) {
           alert('Erro ao enviar sua imagem')
           console.log(err)
