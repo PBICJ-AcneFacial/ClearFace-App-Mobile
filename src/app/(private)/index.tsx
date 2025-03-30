@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Alert,
   ToastAndroid,
+  ImageBackground,
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { ImageUpIcon } from 'lucide-react-native'
@@ -101,47 +102,66 @@ export default function Home() {
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        {messages.map((msg, index) => (
-          <View key={index} style={styles.messageContainer}>
-            <Image source={{ uri: msg.uri }} style={styles.messageImage} />
+    <View style={styles.background}>
+      <ImageBackground
+         style={styles.backgroundImage}
+        source={require('../../../assets/images/background.png')}
+      >
+        <View style={styles.container}>
+          <ScrollView style={styles.scrollView}>
+            {messages.map((msg, index) => (
+              <View key={index} style={styles.messageContainer}>
+                <Image source={{ uri: msg.uri }} style={styles.messageImage} />
+              </View>
+            ))}
+          </ScrollView>
+          <View style={styles.uploadContainer}>
+            {previewImage && (
+              <View style={styles.previewContainer}>
+                <Image
+                  source={{ uri: previewImage }}
+                  style={{
+                    width: '100%',
+                    height: undefined,
+                    aspectRatio: 16 / 9,
+                    borderRadius: 12,
+                  }}
+                />
+              </View>
+            )}
+            <TouchableOpacity
+              onPress={previewImage === null ? handlePickerImage : sendImage}
+              style={styles.button}
+            >
+              <Text style={styles.buttonText} numberOfLines={1}>
+                {previewImage
+                  ? previewImage.split('/').pop()
+                  : 'Adicionar Imagem'}
+              </Text>
+              <ImageUpIcon color={colors.gray[50]} size={32} />
+            </TouchableOpacity>
           </View>
-        ))}
-      </ScrollView>
-
-      <View style={styles.uploadContainer}>
-        {previewImage && (
-          <View style={styles.previewContainer}>
-            <Image
-              source={{ uri: previewImage }}
-              style={{
-                width: '100%',
-                height: undefined,
-                aspectRatio: 16 / 9,
-                borderRadius: 12,
-              }}
-            />
-          </View>
-        )}
-        <TouchableOpacity
-          onPress={previewImage === null ? handlePickerImage : sendImage}
-          style={styles.button}
-        >
-          <Text style={styles.buttonText} numberOfLines={1}>
-            {previewImage ? previewImage.split('/').pop() : 'Adicionar Imagem'}
-          </Text>
-          <ImageUpIcon color={colors.gray[50]} size={32} />
-        </TouchableOpacity>
-      </View>
+        </View>
+      </ImageBackground>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    alignItems: 'center', // Centraliza horizontalmente
+    justifyContent: 'center', // Centraliza verticalmente
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover', // Usa 'cover' para preencher toda a tela
+  },
   container: {
     flex: 1,
-    backgroundColor: colors.gray[200],
+    backgroundColor: 'transparent',
     padding: 16,
   },
   scrollView: {
