@@ -11,27 +11,19 @@ type UploadImageResponse = {
   }
 }
 
-export async function uploadImage(formData: FormData): Promise<UploadImageResponse> {
+export async function uploadImage(formData: FormData) {
   try {
     const token = await AsyncStorage.getItem('@token')
-
-    if (!token) {
-      throw new Error('Token não encontrado.')
-    }
-
-    const { data } = await api.postForm('/images', formData, {
+    const response = await api.post('/images', formData, {
       headers: {
+        // Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`, // Corrigido aqui
+        Authorization: `Bearer ${token}`,
       },
     })
 
-    console.log('Imagem enviada para a API.')
-    console.log(data)
-
-    return data
-  } catch (error) {
-    console.error('Erro ao enviar imagem:', error)
-    throw new Error('Erro ao enviar a imagem')
+    return response.data
+  } catch (err) {
+    console.log(err)
   }
 }

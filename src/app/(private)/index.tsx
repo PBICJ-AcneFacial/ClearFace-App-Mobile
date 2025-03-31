@@ -73,6 +73,7 @@ export default function Home() {
           })
 
           setImageId(response.data.image.id)
+          console.log(response.data.image.id)
 
           if (response.data.error) {
             Alert.alert(
@@ -95,16 +96,20 @@ export default function Home() {
       setMessages((prev) => [...prev, { type: 'image', uri: previewImage }])
       setPreviewImage(null)
 
-      const response = await createConsultation(imageId)
-      console.log('Consulta criada!')
-      console.log(response)
+      try {
+        const response = await createConsultation(imageId)
+        console.log('Consulta criada!')
+        console.log(response)
+      } catch (err) {
+        console.log(err)
+      }
     }
   }
 
   return (
     <View style={styles.background}>
       <ImageBackground
-         style={styles.backgroundImage}
+        style={styles.backgroundImage}
         source={require('../../../assets/images/background.png')}
       >
         <View style={styles.container}>
