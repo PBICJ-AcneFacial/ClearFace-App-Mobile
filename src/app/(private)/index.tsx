@@ -1,3 +1,4 @@
+import * as ImagePicker from 'expo-image-picker'
 import * as React from 'react'
 import {
   ScrollView,
@@ -5,17 +6,15 @@ import {
   Image,
   TouchableOpacity,
   Text,
-  StyleSheet,
   Alert,
   ToastAndroid,
   ImageBackground,
 } from 'react-native'
-import * as ImagePicker from 'expo-image-picker'
 import { ImageUpIcon } from 'lucide-react-native'
 import { colors, fontFamily } from '@/styles/theme'
-import { api } from '@/services/api'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createConsultation } from '@/services/http/consultations/create-consultation'
+import { uploadImage } from '@/services/http/images/upload-image'
+import { styles } from './styles'
 
 export default function Home() {
   const [messages, setMessages] = React.useState<
@@ -63,46 +62,37 @@ export default function Home() {
         setPreviewImage(assets[0].uri)
 
         try {
-          const token = await AsyncStorage.getItem('@token')
-          const response = await api.post('/images', formData, {
-            headers: {
-              // Accept: 'application/json',
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`,
-            },
-          })
+          const response = await uploadImage(formData)
 
-          setImageId(response.data.image.id)
-          console.log(response.data.image.id)
-
-          if (response.data.error) {
+          if (response) {
+            setImageId(response.image.id)
+            Alert.alert('Sucesso 🎉', 'Sua imagem foi enviada com sucesso!')
+          } else {
             Alert.alert(
               'Erro',
-              'Não foi possivel enviar sua imagem. Por favor, tente novamente mais tarde!'
+              'Não foi possível enviar sua imagem. Tente novamente mais tarde!'
             )
-          } else {
-            Alert.alert('Sucesso 🎉', 'Sua imagem foi enviada com sucesso!')
           }
-        } catch (err) {
-          alert('Erro ao enviar sua imagem')
-          console.log(err)
+        } catch {
+          Alert.alert('Erro', 'Falha ao enviar a imagem.')
         }
       }
     }
   }
 
   async function sendImage() {
-    if (previewImage) {
+    if (previewImage && imageId) {
       setMessages((prev) => [...prev, { type: 'image', uri: previewImage }])
       setPreviewImage(null)
 
       try {
         const response = await createConsultation(imageId)
-        console.log('Consulta criada!')
-        console.log(response)
+        console.log('Consulta criada!', response)
       } catch (err) {
-        console.log(err)
+        console.error('Erro ao criar consulta:', err)
       }
+    } else {
+      Alert.alert('Atenção', 'Nenhuma imagem foi enviada ainda.')
     }
   }
 
@@ -152,69 +142,4 @@ export default function Home() {
   )
 }
 
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    alignItems: 'center', // Centraliza horizontalmente
-    justifyContent: 'center', // Centraliza verticalmente
-  },
-  backgroundImage: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover', // Usa 'cover' para preencher toda a tela
-  },
-  container: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    padding: 16,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  messageContainer: {
-    alignSelf: 'flex-end',
-    backgroundColor: colors.gray[900],
-    padding: 8,
-    borderRadius: 10,
-    marginBottom: 8,
-    maxWidth: '75%',
-  },
-  messageImage: {
-    width: 200,
-    height: 120,
-    borderRadius: 8,
-  },
-  uploadContainer: {
-    backgroundColor: colors.gray[900],
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 24,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    gap: 16,
-  },
-  previewContainer: {
-    padding: 2,
-    borderRadius: 24,
-    gap: 12,
-  },
-  previewImage: {
-    height: 200,
-    borderRadius: 12,
-  },
-  button: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-  },
-  buttonText: {
-    color: colors.gray[50],
-    marginRight: 8,
-    fontSize: 20,
-    fontFamily: fontFamily.regular,
-    maxWidth: 280,
-  },
-})
+

@@ -11,12 +11,17 @@ type UploadImageResponse = {
   }
 }
 
-export async function uploadImage(formData: FormData) {
+export async function uploadImage(
+  formData: FormData
+): Promise<UploadImageResponse | null> {
   try {
     const token = await AsyncStorage.getItem('@token')
-    const response = await api.post('/images', formData, {
+    if (!token) {
+      throw new Error('Token não encontrado')
+    }
+
+    const response = await api.post<UploadImageResponse>('/images', formData, {
       headers: {
-        // Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${token}`,
       },
@@ -24,6 +29,7 @@ export async function uploadImage(formData: FormData) {
 
     return response.data
   } catch (err) {
-    console.log(err)
+    console.error('Erro ao enviar imagem:', err)
+    return null
   }
 }
