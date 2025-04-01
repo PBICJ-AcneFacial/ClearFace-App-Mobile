@@ -8,6 +8,8 @@ import {
   LayoutChangeEvent,
 } from 'react-native'
 import { styles } from './styles'
+import { BookOpen, ChartLine, LogOut, UserPen } from 'lucide-react-native'
+import { colors } from '@/styles/theme'
 
 export function ProfileCard() {
   const [isDropdownOpen, setDropdownOpen] = useState(false)
@@ -29,7 +31,9 @@ export function ProfileCard() {
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>IH</Text>
         </View>
-        <Text style={styles.username}>Ismael Henrique</Text>
+        <Text style={styles.username} numberOfLines={1}>
+          Ismael Henrique
+        </Text>
       </TouchableOpacity>
 
       {/* Dropdown como Modal */}
@@ -45,29 +49,35 @@ export function ProfileCard() {
           onPress={() => setDropdownOpen(false)}
         >
           <View style={[styles.dropdownMenu, { width: profileWidth }]}>
-            <Text style={styles.dropdownLabel}>
+            <Text style={styles.dropdownLabel} numberOfLines={1}>
               ismael.henrique.dev@gmail.com
             </Text>
             <View style={styles.separator} />
 
             <TouchableOpacity style={styles.dropdownItem}>
-              <Text>🔑 Alterar email ou senha</Text>
+              <UserPen color={colors.gray[900]} size={20} />
+              <Text style={styles.dropdownItemText}>
+                Alterar email ou senha
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.dropdownItem}>
-              <Text>📖 Documentação</Text>
+              <BookOpen color={colors.gray[900]} size={20} />
+              <Text style={styles.dropdownItemText}>Documentação</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.navigate('/(private)/overview')}
               style={styles.dropdownItem}
             >
-              <Text>📊 Overview</Text>
+              <ChartLine color={colors.gray[900]} size={20} />
+              <Text style={styles.dropdownItemText}>Overview</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => router.navigate('/(auth)/login')}
               style={[styles.dropdownItem, styles.logout]}
             >
-              <Text style={styles.logoutText}>🚪 Log out</Text>
+              <LogOut color={colors.gray[900]} size={20} />
+              <Text style={styles.dropdownItemText}>Log out</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>

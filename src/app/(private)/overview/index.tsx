@@ -1,20 +1,30 @@
 import React from 'react'
+import { Text, View, Dimensions, ScrollView } from 'react-native'
 import { SummaryCard } from '@/components/overview/summary-card'
-import { Text, View, Dimensions, StyleSheet, ScrollView } from 'react-native'
 import { LineChart } from 'react-native-chart-kit'
+import { styles } from './styles'
+import { colors } from '@/styles/theme'
 
 export default function OverviewScreen() {
-  const DATA = Array.from({ length: 30 }, (_, i) => ({
-    day: i + 1,
-    value: Math.random() * 100, // Simulação de dados aleatórios
-  }))
+  const DATA = [
+    { day: 1, value: 80 },
+    { day: 4, value: 95 },
+    { day: 7, value: 60 },
+    { day: 10, value: 75 },
+    { day: 13, value: 50 },
+    { day: 16, value: 55 },
+    { day: 19, value: 40 },
+    { day: 22, value: 65 },
+    { day: 25, value: 45 },
+    { day: 28, value: 50 },
+  ]
 
   const chartHeight = 300
   const width = Dimensions.get('window').width - 40
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Evolução da Condição</Text>
+      <Text style={styles.title}>Resumo das últimas consultas</Text>
 
       <View style={styles.chartContainer}>
         <LineChart
@@ -28,47 +38,31 @@ export default function OverviewScreen() {
           height={chartHeight}
           yLabelsOffset={15}
           chartConfig={{
-            backgroundColor: '#F5F8FF',
-            backgroundGradientFrom: '#F5F8FF',
-            backgroundGradientTo: '#F5F8FF',
-            decimalPlaces: 0,
-            color: () => '#1E5AFF',
-            labelColor: () => '#AAB2C8',
-            propsForDots: { r: '2', strokeWidth: '1', stroke: '#1E5AFF' },
+            backgroundGradientFrom: colors.gray[50],
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientTo: colors.gray[50],
+            backgroundGradientToOpacity: 0,
+            color: () => colors.blue.base,
+            labelColor: () => colors.zinc[600],
+            propsForDots: {
+              r: '2',
+              strokeWidth: '1',
+              stroke: colors.blue.base,
+            },
             propsForBackgroundLines: {
-              stroke: '#E5E8F0',
-              strokeDasharray: '5 5',
+              stroke: colors.gray[300],
+              strokeDasharray: '4 1',
             },
           }}
-          bezier
-          style={styles.chart}
+          // bezier
+          style={{
+            borderRadius: 12,
+            backgroundColor: colors.gray[200],
+            paddingTop: 20,
+          }}
         />
       </View>
       <SummaryCard classification='moderada' />
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F8FF',
-  },
-  content: {
-    alignItems: 'center',
-    padding: 10,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  chartContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  chart: {
-    borderRadius: 10,
-  },
-})

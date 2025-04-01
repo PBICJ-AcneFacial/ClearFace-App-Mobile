@@ -16,6 +16,12 @@ export const colors = {
     light: '#FDEDED',
     base: '#F94144',
   },
+  blue: {
+    base: '#2563EB',
+  },
+  zinc: {
+    600: '#52525b',
+  },
 }
 
 export const fontFamily = {

@@ -1,30 +1,32 @@
 import { Input } from '@/components/ui/input'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { getErrorMessage } from '@/functions'
-import { loginUser } from '@/services/http/auth/login-user'
-import { LoginFormSchema, loginFormSchema } from '@/validators/login-validators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { router } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
-import { Text, View,  TouchableOpacity } from 'react-native'
+import { Text, View, TouchableOpacity } from 'react-native'
 import { styles } from './styles'
+import {
+  SendCodeFormSchema,
+  sendCodeFormSchema,
+} from '@/validators/send-code-validators'
+import { BackButton } from '@/components/ui/back-button'
 
-export default function Login() {
+export default function SendCode() {
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormSchema>({
-    resolver: zodResolver(loginFormSchema),
+  } = useForm<SendCodeFormSchema>({
+    resolver: zodResolver(sendCodeFormSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   })
 
-  async function handleSubmitFormLogin(data: LoginFormSchema) {
+  async function handleSubmitFormLogin(data: SendCodeFormSchema) {
     try {
-      await loginUser(data)
+      // await loginUser(data)
       console.log(data)
       console.log('User logged')
       router.navigate('/')
@@ -38,7 +40,10 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Login</Text>
+        <View style={styles.infoArea}>
+          <BackButton />
+          <Text style={styles.title}>Código de Confirmação</Text>
+        </View>
         <Text style={styles.subtitle}>
           Email e senha necessários para a autenticação
         </Text>
@@ -59,24 +64,9 @@ export default function Login() {
           )}
           name='email'
         />
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder='Informe sua senha'
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-          name='password'
-        />
       </View>
       <TouchableOpacity>
-        <Text onPress={() => router.navigate('/(auth)/password-recovery/send-email')} style={styles.forgotPassword}>Esqueci a senha</Text>
+        <Text style={styles.forgotPassword}>Esqueci a senha</Text>
       </TouchableOpacity>
       <SubmitButton onPress={handleSubmit(handleSubmitFormLogin)}>
         Confirmar
@@ -93,5 +83,3 @@ export default function Login() {
     </View>
   )
 }
-
-

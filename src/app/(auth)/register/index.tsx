@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { router } from 'expo-router'
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native'
+import { Text, View, TouchableOpacity } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { registerUser } from '@/services/http/auth/register-user'
@@ -9,6 +9,7 @@ import {
   registerFormSchema,
   RegisterFormSchema,
 } from '@/validators/register-validators'
+import { styles } from './styles'
 
 export default function Register() {
   const {
@@ -23,7 +24,6 @@ export default function Register() {
       password: '',
     },
   })
-  const onSubmit = (data: RegisterFormSchema) => console.log(data)
 
   async function handleSubmitFormRegister(data: RegisterFormSchema) {
     try {
@@ -90,9 +90,7 @@ export default function Register() {
           name='password'
         />
       </View>
-      <TouchableOpacity>
-        <Text style={styles.forgotPassword}>Esqueci a senha</Text>
-      </TouchableOpacity>
+
       <SubmitButton onPress={handleSubmit(handleSubmitFormRegister)}>Confirmar</SubmitButton>
       <Text
         onPress={() => router.navigate('/(auth)/login')}
@@ -104,46 +102,4 @@ export default function Register() {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  header: {
-    width: '100%',
-    gap: 12,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-    textAlign: 'left',
-  },
-  subtitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#52525B',
-  },
-  inputContainer: {
-    width: '100%',
-    alignItems: 'center',
-    flexDirection: 'column',
-    gap: 10,
-  },
-  forgotPassword: {
-    fontSize: 14,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
-    color: '#52525B',
-  },
-  registerText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#52525B',
-    textAlign: 'center',
-  },
-  registerLink: {
-    textDecorationLine: 'underline',
-  },
-})
+

@@ -1,4 +1,4 @@
-import { fontFamily } from '@/styles/theme'
+import { colors, fontFamily } from '@/styles/theme'
 import { StyleSheet } from 'react-native'
 
 export const s = StyleSheet.create({
@@ -17,13 +17,14 @@ export const s = StyleSheet.create({
     top: 0,
     width: 280,
     height: '100%',
-    backgroundColor: '#f3f4f6',
-    padding: 20,
-    paddingVertical: 32,
+    backgroundColor: colors.gray[100],
+    paddingHorizontal: 12,
+    paddingTop: 28,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
+    justifyContent: 'space-between',
   },
   headerText: {
     fontSize: 16,
@@ -35,23 +36,17 @@ export const s = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 16,
   },
-  consultationText: { fontSize: 14, fontWeight: '500' },
+  consultationText: {
+    fontSize: 14,
+    fontWeight: '500',
+    fontFamily: fontFamily.medium,
+  },
   footer: {
     marginTop: 'auto',
     flexDirection: 'row',
     alignItems: 'center',
     borderTopWidth: 1,
-    borderTopColor: '#d1d5db',
+    borderTopColor: colors.gray[300],
     paddingTop: 16,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#1f2937',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: { color: 'white', fontWeight: 'bold' },
-  userName: { marginLeft: 12, fontSize: 14, fontWeight: 'bold' },
+  }
 })

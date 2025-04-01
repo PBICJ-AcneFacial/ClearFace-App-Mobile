@@ -1,3 +1,4 @@
+import { colors } from '@/styles/theme';
 import { Text, TouchableOpacity, TouchableOpacityProps, StyleSheet } from 'react-native';
 
 type ButtonProps = TouchableOpacityProps & {
@@ -14,7 +15,7 @@ export function SubmitButton({ children, ...rest }: ButtonProps) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#0C8CE9',
+    backgroundColor: colors.gray[900],
     alignItems: 'center',
     justifyContent: 'center',
     height: 40,

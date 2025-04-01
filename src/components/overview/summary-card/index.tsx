@@ -1,17 +1,19 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native'
+import { styles } from './styles'
+import { colors } from '@/styles/theme'
 
-type Classification = 'moderada' | 'grave' | 'leve';
+type Classification = 'moderada' | 'grave' | 'leve'
 
 interface SummaryCardProps {
-  classification: Classification;
+  classification: Classification
 }
 
 export function SummaryCard({ classification }: SummaryCardProps) {
   const statusColors = {
     moderada: '#F59E0B', // Laranja
-    grave: '#DC2626', // Vermelho
-    leve: '#22C55E', // Verde
-  };
+    grave: colors.red.base, // Vermelho
+    leve: colors.green.base, // Verde
+  }
 
   return (
     <View style={styles.card}>
@@ -23,42 +25,9 @@ export function SummaryCard({ classification }: SummaryCardProps) {
         </Text>
       </View>
       <Text style={styles.description}>
-        A classificação atual é {classification}. Seu grau de acne pode ser reduzido se continuar assim.
+        A classificação atual é {classification}. Seu grau de acne pode ser
+        reduzido se continuar assim.
       </Text>
     </View>
-  );
+  )
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: '#0F1623',
-    padding: 16,
-    borderRadius: 16,
-    width: '100%',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  status: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginLeft: 6,
-  },
-  description: {
-    fontSize: 14,
-    color: '#E5E7EB',
-  },
-});
