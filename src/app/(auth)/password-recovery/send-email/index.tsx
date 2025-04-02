@@ -11,8 +11,9 @@ import {
   sendEmailFormSchema,
 } from '@/validators/send-email-validators'
 import { BackButton } from '@/components/ui/back-button'
+import { sendEmailUser } from '@/services/http/auth/send-email-user'
 
-export default function SendCode() {
+export default function SendEmail() {
   const {
     control,
     handleSubmit,
@@ -24,12 +25,13 @@ export default function SendCode() {
     },
   })
 
-  async function handleSubmitFormLogin(data: SendEmailFormSchema) {
+  async function handleSubmitFormSendEmail(data: SendEmailFormSchema) {
     try {
-      // await loginUser(data)
+      const response = await sendEmailUser(data)
       console.log(data)
-      console.log('User logged')
-      router.navigate('/')
+      console.log('Código enviado por email')
+  
+      router.navigate('/(auth)/password-recovery/send-code')
     } catch (error) {
       const errorMessage = getErrorMessage(error)
 
@@ -65,7 +67,7 @@ export default function SendCode() {
           name='email'
         />
       </View>
-      <SubmitButton onPress={handleSubmit(handleSubmitFormLogin)}>
+      <SubmitButton onPress={handleSubmit(handleSubmitFormSendEmail)}>
         Confirmar
       </SubmitButton>
     </View>

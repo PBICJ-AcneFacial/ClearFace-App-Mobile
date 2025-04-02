@@ -11,6 +11,7 @@ import {
   sendCodeFormSchema,
 } from '@/validators/send-code-validators'
 import { BackButton } from '@/components/ui/back-button'
+import { sendCodeUser } from '@/services/http/auth/send-code-user'
 
 export default function SendCode() {
   const {
@@ -20,15 +21,17 @@ export default function SendCode() {
   } = useForm<SendCodeFormSchema>({
     resolver: zodResolver(sendCodeFormSchema),
     defaultValues: {
-      email: '',
+      refCode: '',
+      newPassword: '',
     },
   })
 
-  async function handleSubmitFormLogin(data: SendCodeFormSchema) {
+  async function handleSubmitFormSendCode(data: SendCodeFormSchema) {
     try {
-      // await loginUser(data)
+      const response = await sendCodeUser(data)
       console.log(data)
-      console.log('User logged')
+      console.log('Senha recuperada com sucesso!')
+      console.log(response)
       router.navigate('/')
     } catch (error) {
       const errorMessage = getErrorMessage(error)
@@ -42,10 +45,10 @@ export default function SendCode() {
       <View style={styles.header}>
         <View style={styles.infoArea}>
           <BackButton />
-          <Text style={styles.title}>Código de Confirmação</Text>
+          <Text style={styles.title}>Nova senha</Text>
         </View>
         <Text style={styles.subtitle}>
-          Email e senha necessários para a autenticação
+          Insira o código que foi enviado no seu email e crie uma nova senha.
         </Text>
       </View>
       <View style={styles.inputContainer}>
@@ -56,19 +59,34 @@ export default function SendCode() {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              placeholder='Informe seu email'
+              placeholder='Informe o código de verificação.'
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
             />
           )}
-          name='email'
+          name='refCode'
+        />
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              placeholder='Crie uma nova senha.'
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+          name='newPassword'
         />
       </View>
       <TouchableOpacity>
         <Text style={styles.forgotPassword}>Esqueci a senha</Text>
       </TouchableOpacity>
-      <SubmitButton onPress={handleSubmit(handleSubmitFormLogin)}>
+      <SubmitButton onPress={handleSubmit(handleSubmitFormSendCode)}>
         Confirmar
       </SubmitButton>
       <Text style={styles.registerText}>
