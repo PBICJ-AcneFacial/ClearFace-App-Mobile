@@ -6,6 +6,8 @@ import { AlignLeft } from 'lucide-react-native'
 import { NewConsultationButton } from '@/components/new-consulation-button'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useAuth } from '@/hooks/use-auth'
+import { ConsultationProvider } from '@/contexts/consultation-context'
+import { colors } from '@/styles/theme'
 
 export default function PrivateRoutesLayout() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -13,28 +15,32 @@ export default function PrivateRoutesLayout() {
   const { isLogged } = useAuth()
 
   useEffect(() => {
-    const log = isLogged()
-    console.log(log)
+    isLogged()
   }, [])
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
-        <Stack
-          screenOptions={{
-            title: '',
-            headerLeft: () => (
-              <TouchableOpacity onPress={() => setIsDrawerOpen(true)}>
-                <AlignLeft color='#000' size={24} />
-              </TouchableOpacity>
-            ),
-            headerRight: () => <NewConsultationButton />,
-          }}
-        >
-          <Stack.Screen name='index' />
-          <Stack.Screen name='overview' />
-        </Stack>
-      </Drawer>
-    </GestureHandlerRootView>
+    <ConsultationProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
+          <Stack
+            screenOptions={{
+              title: '',
+              headerLeft: () => (
+                <TouchableOpacity onPress={() => setIsDrawerOpen(true)}>
+                  <AlignLeft color={colors.gray[900]} size={24} />
+                </TouchableOpacity>
+              ),
+              headerRight: () => <NewConsultationButton />,
+              headerStyle: {
+                backgroundColor: colors.gray[200],
+              },
+            }}
+          >
+            <Stack.Screen name='index' />
+            <Stack.Screen name='overview' />
+          </Stack>
+        </Drawer>
+      </GestureHandlerRootView>
+    </ConsultationProvider>
   )
 }

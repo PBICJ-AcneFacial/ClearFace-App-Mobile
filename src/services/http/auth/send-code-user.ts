@@ -1,9 +1,9 @@
 import { getAxiosStatusCode } from '@/functions'
 import { api } from '@/services/api'
-import { SendCodeFormSchema } from '@/validators/send-code-validators'
+import { SendCodeFormData, SendCodeFormSchema } from '@/validators/send-code-validators'
 
 export async function sendCodeUser(
-  formData: SendCodeFormSchema
+  formData: SendCodeFormData
 ) {
   try {
     const { data } = await api.put('/auth/password', formData)

@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { router } from 'expo-router'
-import { Text, View, TouchableOpacity } from 'react-native'
+import { Text, View } from 'react-native'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { registerUser } from '@/services/http/auth/register-user'
@@ -10,27 +10,39 @@ import {
   RegisterFormSchema,
 } from '@/validators/register-validators'
 import { styles } from './styles'
+import { TextError } from '@/components/ui/text-error'
+import { Loading } from '@/components/loading'
+import { colors } from '@/styles/theme'
+import { useState } from 'react'
 
 export default function Register() {
+  const [isLoading, setIsLoading] = useState(false)
+
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<RegisterFormSchema>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
       name: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   })
 
-  async function handleSubmitFormRegister(data: RegisterFormSchema) {
+  async function handleSubmitFormRegister(formData: RegisterFormSchema) {
+    setIsLoading(true)
+    const { name, email, password } = formData
+
     try {
-      await registerUser(data)
-      console.log(data)
+      await registerUser({ name, email, password })
+      console.log(formData)
     } catch {
       // showErrorToast('Erro ao criar conta.')
+    } finally {
+      setIsLoading(true)
     }
   }
 
@@ -39,7 +51,7 @@ export default function Register() {
       <View style={styles.header}>
         <Text style={styles.title}>Register</Text>
         <Text style={styles.subtitle}>
-          Email e senha necessários para a autenticação
+          Infome os dados abaixo para criar sua conta.
         </Text>
       </View>
       <View style={styles.inputContainer}>
@@ -58,6 +70,7 @@ export default function Register() {
           )}
           name='name'
         />
+        {errors.name && <TextError>{errors.name.message}</TextError>}
 
         <Controller
           control={control}
@@ -74,6 +87,7 @@ export default function Register() {
           )}
           name='email'
         />
+        {errors.email && <TextError>{errors.email.message}</TextError>}
         <Controller
           control={control}
           rules={{
@@ -81,7 +95,7 @@ export default function Register() {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              placeholder='Informe sua senha'
+              placeholder='Crie uma senha'
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
@@ -89,9 +103,37 @@ export default function Register() {
           )}
           name='password'
         />
+        {errors.password && <TextError>{errors.password.message}</TextError>}
+        <Controller
+          control={control}
+          rules={{
+            required: true,
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              placeholder='Confirme sua senha'
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+            />
+          )}
+          name='confirmPassword'
+        />
+        {errors.confirmPassword && (
+          <TextError>{errors.confirmPassword.message}</TextError>
+        )}
       </View>
 
-      <SubmitButton onPress={handleSubmit(handleSubmitFormRegister)}>Confirmar</SubmitButton>
+      <SubmitButton
+        onPress={handleSubmit(handleSubmitFormRegister)}
+        disabled={isLoading || !isValid}
+      >
+        {isLoading ? (
+          <Loading color={colors.gray[100]} />
+        ) : (
+          <SubmitButton.Title>Confirmar</SubmitButton.Title>
+        )}
+      </SubmitButton>
       <Text
         onPress={() => router.navigate('/(auth)/login')}
         style={styles.registerText}
@@ -101,5 +143,3 @@ export default function Register() {
     </View>
   )
 }
-
-

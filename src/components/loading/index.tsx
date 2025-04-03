@@ -1,8 +1,8 @@
-
-import { ActivityIndicator } from 'react-native'
+import { ActivityIndicator, ActivityIndicatorProps } from 'react-native'
 import { s } from './styles'
-import { colors } from '@/styles/theme'
 
-export function Loading() {
-  return <ActivityIndicator color={colors.gray[900]} style={s.container} />
+type LoadingProps = ActivityIndicatorProps
+
+export function Loading({ ...rest }: LoadingProps) {
+  return <ActivityIndicator style={s.container} {...rest} />
 }

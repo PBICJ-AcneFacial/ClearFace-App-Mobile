@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 24,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 24,
   },
   header: {
     width: '100%',
@@ -25,7 +26,7 @@ export const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     flexDirection: 'column',
-    gap: 10,
+    gap: 16,
   },
   forgotPassword: {
     fontSize: 14,

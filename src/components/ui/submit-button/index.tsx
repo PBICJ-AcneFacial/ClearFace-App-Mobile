@@ -1,29 +1,29 @@
-import { colors } from '@/styles/theme';
-import { Text, TouchableOpacity, TouchableOpacityProps, StyleSheet } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  TextProps,
+} from 'react-native'
+import { styles } from './styles'
 
-type ButtonProps = TouchableOpacityProps & {
-  children: React.ReactNode;
-};
+type ButtonProps = TouchableOpacityProps
 
-export function SubmitButton({ children, ...rest }: ButtonProps) {
+function SubmitButton({ children, disabled, ...rest }: ButtonProps) {
   return (
-    <TouchableOpacity style={styles.button} activeOpacity={0.8} {...rest}>
-      <Text style={styles.text}>{children}</Text>
+    <TouchableOpacity
+      style={[styles.button, disabled && styles.buttonDisabled]}
+      activeOpacity={0.8}
+      {...rest}
+    >
+      {children}
     </TouchableOpacity>
-  );
+  )
 }
 
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: colors.gray[900],
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 40,
-    width: '100%',
-    borderRadius: 24,
-  },
-  text: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-});
+function Title({ children }: TextProps) {
+  return <Text style={styles.text}>{children}</Text>
+}
+
+SubmitButton.Title = Title
+
+export { SubmitButton }

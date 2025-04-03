@@ -15,13 +15,16 @@ import { colors, fontFamily } from '@/styles/theme'
 import { createConsultation } from '@/services/http/consultations/create-consultation'
 import { uploadImage } from '@/services/http/images/upload-image'
 import { styles } from './styles'
+import { useConsultation } from '@/contexts/consultation-context'
 
 export default function Home() {
-  const [messages, setMessages] = React.useState<
-    { type: 'image'; uri: string }[]
-  >([])
-  const [previewImage, setPreviewImage] = React.useState<string | null>(null)
-  const [imageId, setImageId] = React.useState('')
+  // const [messages, setMessages] = React.useState<
+  //   { type: 'image'; uri: string }[]
+  // >([])
+  // const [previewImage, setPreviewImage] = React.useState<string | null>(null)
+  // const [imageId, setImageId] = React.useState('')
+
+  const {addConsultation,setImageId, imageId, messages, previewImage, setPreviewImage} = useConsultation()
 
   const handlePickerImage = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -82,7 +85,7 @@ export default function Home() {
 
   async function sendImage() {
     if (previewImage && imageId) {
-      setMessages((prev) => [...prev, { type: 'image', uri: previewImage }])
+      addConsultation(previewImage)
       setPreviewImage(null)
 
       try {

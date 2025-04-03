@@ -1,4 +1,4 @@
-import { RegisterFormSchema } from '@/validators/register-validators'
+import { RegisterFormData, RegisterFormSchema } from '@/validators/register-validators'
 import { api } from '@/services/api'
 import { getAxiosStatusCode } from '@/functions'
 
@@ -8,7 +8,7 @@ type RegisterUserResponse = {
 }
 
 export async function registerUser(
-  formData: RegisterFormSchema
+  formData: RegisterFormData
 ): Promise<RegisterUserResponse> {
   try {
     const { data } = await api.post('/auth/register', formData)

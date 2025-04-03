@@ -24,8 +24,9 @@ export const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'column',
+    gap: 16
   },
   forgotPassword: {
     fontSize: 14,
