@@ -15,17 +15,20 @@ export async function loginUser(
     const { data } = await api.post('/auth/login', formData)
 
     await AsyncStorage.setItem('@token', data.token)
-    console.log(data.token)
 
     return data
   } catch (error) {
     const statusCode = getAxiosStatusCode(error)
 
-    if (statusCode === 401) {
-      throw new Error('Invalid password')
+    switch (statusCode) {
+      case 401:
+        throw new Error('Senha inválida.')
+      case 404:
+        throw new Error('Usuário não encontrado.')
+      case 500:
+        throw new Error('Erro interno no servidor.')
+      default:
+        throw new Error('Erro desconhecido.')
     }
-
-    console.log(error)
-    throw new Error('Login erro to user')
   }
 }

@@ -14,6 +14,8 @@ import { TextError } from '@/components/ui/text-error'
 import { Loading } from '@/components/loading'
 import { colors } from '@/styles/theme'
 import { useState } from 'react'
+import { Toast } from 'toastify-react-native'
+import { getErrorMessage } from '@/functions'
 
 export default function Register() {
   const [isLoading, setIsLoading] = useState(false)
@@ -39,10 +41,25 @@ export default function Register() {
     try {
       await registerUser({ name, email, password })
       console.log(formData)
-    } catch {
-      // showErrorToast('Erro ao criar conta.')
+      Toast.show({
+        type: 'success',
+        text1: 'Conta criada com sucesso!',
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+      })
+    } catch (error) {
+      const errorMessage = getErrorMessage(error)
+      console.log(errorMessage)
+      Toast.show({
+        type: 'error',
+        text1: errorMessage,
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+      })
     } finally {
-      setIsLoading(true)
+      setIsLoading(false)
     }
   }
 
@@ -99,6 +116,7 @@ export default function Register() {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
+              secureTextEntry
             />
           )}
           name='password'

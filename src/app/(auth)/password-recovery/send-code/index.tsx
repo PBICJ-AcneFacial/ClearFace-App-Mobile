@@ -16,6 +16,7 @@ import { Loading } from '@/components/loading'
 import { colors } from '@/styles/theme'
 import { useState } from 'react'
 import { TextError } from '@/components/ui/text-error'
+import { Toast } from 'toastify-react-native'
 
 export default function SendCode() {
   const [isLoading, setIsLoading] = useState(false)
@@ -44,10 +45,23 @@ export default function SendCode() {
       console.log(data)
       console.log('Senha recuperada com sucesso!')
       console.log(response)
+      Toast.show({
+        type: 'success',
+        text1: 'Senha recuperada com sucesso!',
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+      })
       router.navigate('/')
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-
+      Toast.show({
+        type: 'error',
+        text1: errorMessage,
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+      })
       console.log(errorMessage)
     } finally {
       setIsLoading(false)

@@ -1,27 +1,37 @@
-import { RegisterFormData, RegisterFormSchema } from '@/validators/register-validators'
+import { RegisterFormData } from '@/validators/register-validators'
 import { api } from '@/services/api'
 import { getAxiosStatusCode } from '@/functions'
 
-type RegisterUserResponse = {
-  Description: string
-  UserToken: string
+type RegisterSuccessResponse = {
+  id: string
+  name: string
+  email: string
+  created_at: string
+  updated_at: string
 }
 
 export async function registerUser(
   formData: RegisterFormData
-): Promise<RegisterUserResponse> {
+): Promise<RegisterSuccessResponse> {
   try {
-    const { data } = await api.post('/auth/register', formData)
-    console.log(data)
+    const { data } = await api.post<RegisterSuccessResponse>(
+      '/auth/register',
+      formData
+    )
     return data
   } catch (error) {
     const statusCode = getAxiosStatusCode(error)
 
-    if (statusCode === 409) {
-      throw new Error('User already exists')
-    }
+    switch (statusCode) {
+      case 409:
+        throw new Error('Usuário já existe')
 
-    console.log(error)
-    throw new Error('Erro ao registrar usuario')
+      case 500:
+        throw new Error('Erro interno no servidor')
+
+      default:
+        console.error(error)
+        throw new Error('Erro ao registrar usuário')
+    }
   }
 }

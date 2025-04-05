@@ -12,6 +12,7 @@ import { TextError } from '@/components/ui/text-error'
 import { useState } from 'react'
 import { Loading } from '@/components/loading'
 import { colors } from '@/styles/theme'
+import { Toast } from 'toastify-react-native'
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
@@ -34,10 +35,24 @@ export default function Login() {
       await loginUser(data)
       console.log(data)
       console.log('User logged')
+      Toast.show({
+        type: 'success',
+        text1: 'Login bem sucedido!',
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+      })
       router.navigate('/')
     } catch (error) {
       const errorMessage = getErrorMessage(error)
       console.log(errorMessage)
+      Toast.show({
+        type: 'error',
+        text1: errorMessage,
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+      })
     } finally {
       setIsLoading(false)
     }

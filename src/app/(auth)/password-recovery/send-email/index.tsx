@@ -16,6 +16,7 @@ import { useState } from 'react'
 import { Loading } from '@/components/loading'
 import { colors } from '@/styles/theme'
 import { TextError } from '@/components/ui/text-error'
+import { Toast } from 'toastify-react-native'
 
 export default function SendEmail() {
   const [isLoading, setIsLoading] = useState(false)
@@ -33,14 +34,26 @@ export default function SendEmail() {
   async function handleSubmitFormSendEmail(data: SendEmailFormSchema) {
     setIsLoading(true)
     try {
-      const response = await sendEmailUser(data)
+      await sendEmailUser(data)
       console.log(data)
       console.log('Código enviado por email')
-
+      Toast.show({
+        type: 'success',
+        text1: 'Código enviado com sucesso!',
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+      })
       router.navigate('/(auth)/password-recovery/send-code')
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-
+      Toast.show({
+        type: 'error',
+        text1: errorMessage,
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+      })
       console.log(errorMessage)
     } finally {
       setIsLoading(false)

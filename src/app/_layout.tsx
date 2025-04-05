@@ -1,5 +1,6 @@
 import { router, Slot, Stack } from 'expo-router'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import ToastManager from 'toastify-react-native'
 import {
   useFonts,
   Montserrat_400Regular,
@@ -11,6 +12,7 @@ import { Loading } from '@/components/loading'
 import React, { useEffect, useState } from 'react'
 import { colors } from '@/styles/theme'
 import { useAuth } from '@/hooks/use-auth'
+import { SafeAreaView } from 'react-native'
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -48,14 +50,17 @@ export default function RootLayout() {
 
   return (
     // <GestureHandlerRootView style={{ flex: 1 }}>
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: colors.gray[100] },
-      }}
-    >
-      <Stack.Screen name='(private)' />
-    </Stack>
+    <SafeAreaView style={{flex: 1}}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.gray[100] },
+        }}
+      >
+        <Stack.Screen name='(private)' />
+      </Stack>
+      <ToastManager />
+    </SafeAreaView>
     // </GestureHandlerRootView>
     // <Slot />
   )

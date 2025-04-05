@@ -1,6 +1,6 @@
 import { getAxiosStatusCode } from '@/functions'
 import { api } from '@/services/api'
-import { SendCodeFormData, SendCodeFormSchema } from '@/validators/send-code-validators'
+import { SendCodeFormData } from '@/validators/send-code-validators'
 
 export async function sendCodeUser(
   formData: SendCodeFormData
@@ -12,11 +12,13 @@ export async function sendCodeUser(
   } catch (error) {
     const statusCode = getAxiosStatusCode(error)
 
-    if (statusCode === 401) {
-      throw new Error('Invalid password')
+    switch (statusCode) {
+      case 400:
+        throw new Error('Código de verificação inválido.')
+      case 500:
+        throw new Error('Erro interno no servidor.')
+      default:
+        throw new Error('Erro desconhecido.')
     }
-
-    console.log(error)
-    throw new Error('Login erro to user')
   }
 }
