@@ -1,6 +1,6 @@
 import axios from 'axios'
 
 export const api = axios.create({
-  baseURL: 'https://clearfaceapideploy.onrender.com',
-  withCredentials: true
+  baseURL: 'api_adress',
+  withCredentials: true,
 })

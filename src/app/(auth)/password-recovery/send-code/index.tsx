@@ -93,6 +93,7 @@ export default function SendCode() {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
+              secureTextEntry
             />
           )}
           name='newPassword'
@@ -107,10 +108,11 @@ export default function SendCode() {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              placeholder='Crie uma nova senha.'
+              placeholder='Confirme a nova senha.'
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
+              secureTextEntry
             />
           )}
           name='confirmNewPassword'

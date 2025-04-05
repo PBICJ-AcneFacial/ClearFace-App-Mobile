@@ -83,7 +83,7 @@ export default function Login() {
       <TouchableOpacity>
         <Text
           onPress={() =>
-            router.navigate('/(auth)/password-recovery/send-code')
+            router.navigate('/(auth)/password-recovery/send-email')
           }
           style={styles.forgotPassword}
         >

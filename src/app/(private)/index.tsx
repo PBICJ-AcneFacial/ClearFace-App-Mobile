@@ -16,6 +16,7 @@ import { createConsultation } from '@/services/http/consultations/create-consult
 import { uploadImage } from '@/services/http/images/upload-image'
 import { styles } from './styles'
 import { useConsultation } from '@/contexts/consultation-context'
+import { ResultCard } from '@/components/ui/result-card'
 
 export default function Home() {
   // const [messages, setMessages] = React.useState<
@@ -24,7 +25,16 @@ export default function Home() {
   // const [previewImage, setPreviewImage] = React.useState<string | null>(null)
   // const [imageId, setImageId] = React.useState('')
 
-  const {addConsultation,setImageId, imageId, messages, previewImage, setPreviewImage} = useConsultation()
+  const {
+    addConsultation,
+    setImageId,
+    imageId,
+    messages,
+    previewImage,
+    setPreviewImage,
+    resultData,
+    updateResultData,
+  } = useConsultation()
 
   const handlePickerImage = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -91,6 +101,10 @@ export default function Home() {
       try {
         const response = await createConsultation(imageId)
         console.log('Consulta criada!', response)
+
+        if (response) {
+          updateResultData(response) // Armazena os dados retornados
+        }
       } catch (err) {
         console.error('Erro ao criar consulta:', err)
       }
@@ -107,11 +121,37 @@ export default function Home() {
       >
         <View style={styles.container}>
           <ScrollView style={styles.scrollView}>
-            {messages.map((msg, index) => (
-              <View key={index} style={styles.messageContainer}>
-                <Image source={{ uri: msg.uri }} style={styles.messageImage} />
-              </View>
-            ))}
+            {messages.map((msg, index) => {
+              const result = resultData[index]
+
+              if (result) {
+                console.log('Image path:', result.resultado.image)
+              }
+
+              return (
+                <View key={index} style={styles.messageArea}>
+                  <View style={styles.messageContainer}>
+                    <Image
+                      source={{ uri: msg.uri }}
+                      style={styles.messageImage}
+                    />
+                  </View>
+                  {result && (
+                    <>
+                      <View style={styles.messageResultContainer}>
+                        <Image
+                          source={{
+                            uri: `http://200.129.17.134:3456${result.resultado.image_path}`,
+                          }}
+                          style={styles.messageImage}
+                        />
+                      </View>
+                      <ResultCard result={result} />
+                    </>
+                  )}
+                </View>
+              )
+            })}
           </ScrollView>
           <View style={styles.uploadContainer}>
             {previewImage && (
@@ -144,5 +184,3 @@ export default function Home() {
     </View>
   )
 }
-
-

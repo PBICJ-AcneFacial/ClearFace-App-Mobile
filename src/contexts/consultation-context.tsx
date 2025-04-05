@@ -6,6 +6,25 @@ interface Consultation {
   uri: string
 }
 
+export interface AcneAnalysisResult {
+  created_at: string
+  id: string
+  resultado: {
+    acne_quantity: {
+      'Cravos Brancos': number
+      'Cravos Pretos': number
+      'Manchas Escuras': number
+      Nódulos: number
+      Pápulas: number
+      Pústulas: number
+    }
+    detected_classes: number[]
+    iga_score: number
+    image: string
+    image_path: string
+  }
+}
+
 interface ConsultationContextData {
   messages: Consultation[]
   previewImage: string | null
@@ -14,6 +33,8 @@ interface ConsultationContextData {
   setImageId: (id: string) => void
   addConsultation: (uri: string) => void
   clearConsultations: () => void
+  resultData: AcneAnalysisResult[]
+  updateResultData: (data: AcneAnalysisResult) => void
 }
 
 const ConsultationContext = createContext<ConsultationContextData>(
@@ -26,10 +47,12 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [messages, setMessages] = useState<Consultation[]>([])
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [imageId, setImageId] = useState('')
+  const [resultData, setResultData] = useState<AcneAnalysisResult[]>([])
 
   const addConsultation = (uri: string) => {
     setMessages((prev) => [...prev, { type: 'image', uri }])
     setPreviewImage(null)
+    console.log('Resultdata: ', resultData)
   }
 
   const clearConsultations = () => {
@@ -39,9 +62,14 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
     router.navigate('/')
   }
 
+  const updateResultData = (data: AcneAnalysisResult) => {
+    setResultData((prev) => [...prev, data])
+  }
+
   return (
     <ConsultationContext.Provider
       value={{
+        resultData,
         messages,
         previewImage,
         imageId,
@@ -49,6 +77,7 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
         setImageId,
         addConsultation,
         clearConsultations,
+        updateResultData,
       }}
     >
       {children}

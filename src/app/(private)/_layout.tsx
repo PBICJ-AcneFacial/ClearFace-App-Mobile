@@ -34,6 +34,7 @@ export default function PrivateRoutesLayout() {
               headerStyle: {
                 backgroundColor: colors.gray[200],
               },
+              headerShadowVisible: false,
             }}
           >
             <Stack.Screen name='index' />

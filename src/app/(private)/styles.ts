@@ -26,8 +26,15 @@ export const styles = StyleSheet.create({
     backgroundColor: colors.gray[900],
     padding: 8,
     borderRadius: 10,
-    marginBottom: 8,
     maxWidth: '75%',
+  },
+  messageResultContainer: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.gray[100],
+    padding: 8,
+    borderRadius: 10,
+    maxWidth: '75%',
+    marginTop: 16
   },
   messageImage: {
     width: 200,
@@ -66,4 +73,8 @@ export const styles = StyleSheet.create({
     fontFamily: fontFamily.regular,
     maxWidth: 280,
   },
+  messageArea: {
+    width: '100%',
+    padding: 8
+  }
 })
