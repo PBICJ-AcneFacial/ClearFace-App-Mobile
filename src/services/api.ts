@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-// http://200.129.17.134:3456
+// http://clearfaceapideploy.onrender.com 
 
 export const api = axios.create({
-  baseURL: 'http://clearfaceapideploy.onrender.com',
+  baseURL: 'http://200.129.17.134:3456',
   withCredentials: true,
 })
