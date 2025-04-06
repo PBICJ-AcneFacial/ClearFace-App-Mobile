@@ -11,7 +11,6 @@ import { Loading } from '@/components/loading'
 
 import React, { useEffect, useState } from 'react'
 import { colors } from '@/styles/theme'
-import { useAuth } from '@/hooks/use-auth'
 import { SafeAreaView } from 'react-native'
 import { AuthProvider } from '@/contexts/auth-context'
 
