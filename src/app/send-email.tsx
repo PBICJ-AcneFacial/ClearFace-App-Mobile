@@ -103,7 +103,6 @@ export default function SendEmail() {
   )
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -130,7 +129,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'flex-start',
     flexDirection: 'column',
-    gap: 16
+    gap: 16,
   },
   forgotPassword: {
     fontSize: 14,
@@ -151,5 +150,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-  }
+  },
 })

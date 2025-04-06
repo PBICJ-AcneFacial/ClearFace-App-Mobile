@@ -34,8 +34,7 @@ export default function Login() {
     setIsLoading(true)
     try {
       await signin(data)
-      console.log(data)
-      console.log('User logged')
+      console.log('Session:', session)
       Toast.show({
         type: 'success',
         text1: 'Login bem sucedido!',
@@ -59,7 +58,8 @@ export default function Login() {
     }
   }
 
-  if (session) return <Redirect href='/(app)' />
+ 
+  // if (session) return <Redirect href='/(app)' />
 
   return (
     <View style={styles.container}>
@@ -100,9 +100,7 @@ export default function Login() {
       </View>
       <TouchableOpacity>
         <Text
-          onPress={() =>
-            router.navigate('/send-email')
-          }
+          onPress={() => router.navigate('/send-email')}
           style={styles.forgotPassword}
         >
           Esqueci a senha

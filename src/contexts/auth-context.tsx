@@ -4,22 +4,17 @@ import React, {
   createContext,
   useState,
   useEffect,
-  ReactNode
+  ReactNode,
 } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { loginUser } from '@/services/http/auth/login-user'
 import { LoginFormSchema } from '@/validators/login-validators'
-import {
-  ActivityIndicator,
-  SafeAreaView,
-  Text
-} from 'react-native'
+import { ActivityIndicator, SafeAreaView, Text } from 'react-native'
 import { getProfile, User } from '@/services/http/user/get-profile'
 
 // 1. Interface para o contexto
 interface AuthContextType {
   user: User | null
-  token: string | null
   loading: boolean
   session: boolean
   signin: (formData: LoginFormSchema) => Promise<void>
@@ -33,7 +28,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
+  const [session, setSession] = useState<boolean>(false)
 
   useEffect(() => {
     init()
@@ -44,13 +39,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const savedToken = await AsyncStorage.getItem('@token')
       if (savedToken) {
-        setToken(savedToken)
+        setSession(true)
         const userData = await getProfile()
         if (userData) {
           setUser(userData)
         }
 
-        console.log(userData)
+        // console.log(userData)
       }
     } catch (error) {
       console.log('Erro ao verificar auth:', error)
@@ -60,12 +55,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signin = async (formData: LoginFormSchema) => {
-    setLoading(true)
+    // setLoading(true)
     try {
       const response = await loginUser(formData)
       if (response) {
-        setToken(response.token)
+        // setToken(response.token)
+
         await AsyncStorage.setItem('@token', response.token)
+        setSession(true)
         // setUser(response.user) se retornar o usuário
       }
     } catch (error) {
@@ -76,11 +73,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signout = async () => {
-    setLoading(true)
+    // setLoading(true)
     try {
       await AsyncStorage.removeItem('@token')
       setUser(null)
-      setToken(null)
+      // setToken(null)
+      setSession(false)
     } catch (err) {
       console.log('Erro ao deslogar:', err)
     } finally {
@@ -90,17 +88,18 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const contextData: AuthContextType = {
     user,
-    token,
     loading,
-    session: !!token,
+    session,
     signin,
-    signout
+    signout,
   }
 
   return (
     <AuthContext.Provider value={contextData}>
       {loading ? (
-        <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <SafeAreaView
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+        >
           <ActivityIndicator />
           <Text>Carregando...</Text>
         </SafeAreaView>
