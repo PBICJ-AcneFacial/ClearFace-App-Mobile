@@ -14,5 +14,15 @@ export function useAuth() {
     }
   }
 
-  return { isLogged }
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem('@token')
+      
+      console.log('logout user.')
+    } catch {
+      throw new Error('Erro ao buscar token.')
+    }
+  }
+
+  return { isLogged, logout }
 }

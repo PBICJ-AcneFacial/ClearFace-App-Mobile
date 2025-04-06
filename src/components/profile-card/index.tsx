@@ -10,14 +10,24 @@ import {
 import { styles } from './styles'
 import { BookOpen, ChartLine, LogOut, UserPen } from 'lucide-react-native'
 import { colors } from '@/styles/theme'
+import { useAuth } from '@/contexts/auth-context'
+import { getInitials } from '@/functions'
 
 export function ProfileCard() {
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [profileWidth, setProfileWidth] = useState(0)
+  const { signout, user } = useAuth()
+
+  const userInitials = getInitials(user?.name)
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout
     setProfileWidth(width)
+  }
+
+  const handleLogoutUser = async () => {
+    await signout()
+    router.navigate('/login')
   }
 
   return (
@@ -29,10 +39,10 @@ export function ProfileCard() {
         onLayout={handleLayout}
       >
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>IH</Text>
+          <Text style={styles.avatarText}>{userInitials}</Text>
         </View>
         <Text style={styles.username} numberOfLines={1}>
-          Ismael Henrique
+          {user?.name}
         </Text>
       </TouchableOpacity>
 
@@ -50,7 +60,8 @@ export function ProfileCard() {
         >
           <View style={[styles.dropdownMenu, { width: profileWidth }]}>
             <Text style={styles.dropdownLabel} numberOfLines={1}>
-              ismael.henrique.dev@gmail.com
+              {/* ismael.henrique.dev@gmail.com */}
+              {user?.email}
             </Text>
             <View style={styles.separator} />
 
@@ -65,7 +76,7 @@ export function ProfileCard() {
               <Text style={styles.dropdownItemText}>Documentação</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => router.navigate('/(private)/overview')}
+              onPress={() => router.navigate('/(app)/overview')}
               style={styles.dropdownItem}
             >
               <ChartLine color={colors.gray[900]} size={20} />
@@ -73,7 +84,7 @@ export function ProfileCard() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.navigate('/(auth)/login')}
+              onPress={handleLogoutUser}
               style={[styles.dropdownItem, styles.logout]}
             >
               <LogOut color={colors.gray[900]} size={20} />

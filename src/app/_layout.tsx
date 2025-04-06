@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react'
 import { colors } from '@/styles/theme'
 import { useAuth } from '@/hooks/use-auth'
 import { SafeAreaView } from 'react-native'
+import { AuthProvider } from '@/contexts/auth-context'
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -21,47 +22,40 @@ export default function RootLayout() {
     Montserrat_600SemiBold,
   })
 
-  const { isLogged } = useAuth()
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
+  // useEffect(() => {
+  //   const checkLogin = async () => {
+  //     try {
+  //       const response = await isLogged()
+  //       console.log('Usuário logado:', response)
+  //       if (!response) {
+  //         router.navigate('/(auth)/login') // usa replace para não deixar voltar
+  //       }
+  //     } catch (error) {
+  //       console.log('Erro ao verificar login:', error)
+  //     } finally {
+  //       setAuthChecked(true)
+  //     }
+  //   }
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      try {
-        const response = await isLogged()
-        setIsAuthenticated(response)
-        if (!response) {
-          router.push('/(auth)/login')
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-
-    checkLogin()
-  }, [])
+  //   checkLogin()
+  // }, [])
 
   if (!fontsLoaded) {
     return <Loading />
   }
 
-  if (isAuthenticated === null) {
-    return <Loading />
-  }
-
   return (
-    // <GestureHandlerRootView style={{ flex: 1 }}>
-    <SafeAreaView style={{flex: 1}}>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: colors.gray[100] },
-        }}
-      >
-        <Stack.Screen name='(private)' />
-      </Stack>
-      <ToastManager />
-    </SafeAreaView>
-    // </GestureHandlerRootView>
-    // <Slot />
+    <AuthProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        {/* <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.gray[100] },
+      }}
+    /> */}
+        <Slot />
+        <ToastManager />
+      </SafeAreaView>
+    </AuthProvider>
   )
 }

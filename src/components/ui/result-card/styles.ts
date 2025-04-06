@@ -2,24 +2,39 @@ import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
   resultContainer: {
-    backgroundColor: '#1E1E2E',
-    padding: 15,
-    borderRadius: 12,
-    marginTop: 16,
+    backgroundColor: '#0B0F1C',
+    borderRadius: 16,
+    padding: 20,
+    marginVertical: 20,
   },
   resultTitle: {
-    color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 16,
   },
-  resultItem: {
-    color: '#FFF',
+  itemRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  label: {
     fontSize: 16,
-    marginTop: 5,
+    color: '#fff',
+  },
+  value: {
+    fontSize: 16,
+    color: '#fff',
+  },
+  valueHighlight: {
+    fontSize: 16,
+    color: 'orange',
+    fontWeight: 'bold',
   },
   precisionText: {
-    color: '#BBB',
     fontSize: 14,
-    marginTop: 10,
+    color: '#ccc',
+    marginTop: 20,
+    lineHeight: 20,
   },
 })

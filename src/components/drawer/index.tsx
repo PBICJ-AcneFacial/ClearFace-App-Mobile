@@ -18,6 +18,8 @@ import {
 // import { ProfileCard } from './profile-card'
 import { s } from './styles'
 import { ProfileCard } from '../profile-card'
+import { getAllConsulations } from '@/services/http/consultations/get-all-consulations'
+import { useAuth } from '@/contexts/auth-context'
 
 const screenWidth = Dimensions.get('window').width
 const DRAWER_WIDTH = 300
@@ -37,6 +39,15 @@ export function Drawer({
   children: React.ReactNode
 }) {
   const translateX = useSharedValue(isOpen ? 0 : -DRAWER_WIDTH)
+  
+  async function handleGetAllConsultations() {
+    const response = await getAllConsulations()
+    console.log('Consultas: ', response)
+  }
+
+  // useEffect(() => {
+  //   handleGetAllConsultations()
+  // }, [])
 
   useEffect(() => {
     translateX.value = withTiming(isOpen ? 0 : -DRAWER_WIDTH, { duration: 300 })
