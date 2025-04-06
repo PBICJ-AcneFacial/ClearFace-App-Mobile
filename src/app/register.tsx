@@ -153,7 +153,7 @@ export default function Register() {
         )}
       </SubmitButton>
       <Text
-        onPress={() => router.navigate('/(auth)/login')}
+        onPress={() => router.navigate('/login')}
         style={styles.registerText}
       >
         Já tenho uma conta - <Text style={styles.registerLink}>Entrar</Text>

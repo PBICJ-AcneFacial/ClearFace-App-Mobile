@@ -6,52 +6,44 @@ import { router } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
 import { StyleSheet, Text, View } from 'react-native'
 import {
-  SendCodeFormSchema,
-  sendCodeFormSchema,
-} from '@/validators/send-code-validators'
+  SendEmailFormSchema,
+  sendEmailFormSchema,
+} from '@/validators/send-email-validators'
 import { BackButton } from '@/components/ui/back-button'
-import { sendCodeUser } from '@/services/http/auth/send-code-user'
+import { sendEmailUser } from '@/services/http/auth/send-email-user'
+import { useState } from 'react'
 import { Loading } from '@/components/loading'
 import { colors } from '@/styles/theme'
-import { useState } from 'react'
 import { TextError } from '@/components/ui/text-error'
 import { Toast } from 'toastify-react-native'
 
-export default function SendCode() {
+export default function SendEmail() {
   const [isLoading, setIsLoading] = useState(false)
-
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<SendCodeFormSchema>({
-    resolver: zodResolver(sendCodeFormSchema),
+  } = useForm<SendEmailFormSchema>({
+    resolver: zodResolver(sendEmailFormSchema),
     defaultValues: {
-      refCode: '',
-      newPassword: '',
+      email: '',
     },
   })
 
-  async function handleSubmitFormSendCode(data: SendCodeFormSchema) {
+  async function handleSubmitFormSendEmail(data: SendEmailFormSchema) {
     setIsLoading(true)
-    const { refCode, newPassword } = data
-
     try {
-      const response = await sendCodeUser({
-        refCode,
-        newPassword,
-      })
+      await sendEmailUser(data)
       console.log(data)
-      console.log('Senha recuperada com sucesso!')
-      console.log(response)
+      console.log('Código enviado por email')
       Toast.show({
         type: 'success',
-        text1: 'Senha recuperada com sucesso!',
+        text1: 'Código enviado com sucesso!',
         position: 'top',
         visibilityTime: 3000,
         autoHide: true,
       })
-      router.navigate('/')
+      router.navigate('/send-code')
     } catch (error) {
       const errorMessage = getErrorMessage(error)
       Toast.show({
@@ -75,7 +67,7 @@ export default function SendCode() {
           <Text style={styles.title}>Recuperação de senha</Text>
         </View>
         <Text style={styles.subtitle}>
-          Insira o código que foi enviado no seu email e crie uma nova senha.
+          Informe o email para recuperar sua senha.
         </Text>
       </View>
       <View style={styles.inputContainer}>
@@ -86,56 +78,19 @@ export default function SendCode() {
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              placeholder='Informe o código de verificação.'
+              placeholder='Informe seu email'
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
             />
           )}
-          name='refCode'
+          name='email'
         />
-        {errors.refCode && <TextError>{errors.refCode.message}</TextError>}
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder='Crie uma nova senha.'
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              secureTextEntry
-            />
-          )}
-          name='newPassword'
-        />
-        {errors.newPassword && (
-          <TextError>{errors.newPassword.message}</TextError>
-        )}
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder='Confirme a nova senha.'
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              secureTextEntry
-            />
-          )}
-          name='confirmNewPassword'
-        />
-        {errors.confirmNewPassword && (
-          <TextError>{errors.confirmNewPassword.message}</TextError>
-        )}
+        {errors.email && <TextError>{errors.email.message}</TextError>}
       </View>
+
       <SubmitButton
-        onPress={handleSubmit(handleSubmitFormSendCode)}
+        onPress={handleSubmit(handleSubmitFormSendEmail)}
         disabled={isLoading || !isValid}
       >
         {isLoading ? (
@@ -147,6 +102,8 @@ export default function SendCode() {
     </View>
   )
 }
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -171,9 +128,9 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'column',
-    gap: 16,
+    gap: 16
   },
   forgotPassword: {
     fontSize: 14,

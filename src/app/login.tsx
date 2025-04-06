@@ -1,7 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { getErrorMessage } from '@/functions'
-import { loginUser } from '@/services/http/auth/login-user'
 import { LoginFormSchema, loginFormSchema } from '@/validators/login-validators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Redirect, router } from 'expo-router'
@@ -17,7 +16,7 @@ import { useAuth } from '@/contexts/auth-context'
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
 
-const { signin, session } = useAuth()
+  const { signin, session } = useAuth()
 
   const {
     control,
@@ -44,7 +43,7 @@ const { signin, session } = useAuth()
         visibilityTime: 3000,
         autoHide: true,
       })
-      router.navigate('/')
+      router.navigate('/(app)')
     } catch (error) {
       const errorMessage = getErrorMessage(error)
       console.log(errorMessage)
@@ -60,7 +59,7 @@ const { signin, session } = useAuth()
     }
   }
 
-  if(session) return <Redirect href="/(app)"/>
+  if (session) return <Redirect href='/(app)' />
 
   return (
     <View style={styles.container}>
@@ -102,7 +101,7 @@ const { signin, session } = useAuth()
       <TouchableOpacity>
         <Text
           onPress={() =>
-            router.navigate('/(auth)/password-recovery/send-email')
+            router.navigate('/send-email')
           }
           style={styles.forgotPassword}
         >
@@ -122,7 +121,10 @@ const { signin, session } = useAuth()
       <Text style={styles.registerText}>
         Ainda não tenho uma conta -{' '}
         <Text
-          onPress={() => router.navigate('/(auth)/register')}
+          onPress={() => {
+            router.navigate('/register')
+            console.log('/register')
+          }}
           style={styles.registerLink}
         >
           Cadastrar-se
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 24
+    gap: 24,
   },
   header: {
     width: '100%',
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'left',
-    fontFamily: fontFamily.semiBold
+    fontFamily: fontFamily.semiBold,
   },
   subtitle: {
     fontSize: 14,
