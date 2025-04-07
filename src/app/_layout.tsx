@@ -44,17 +44,22 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <SafeAreaView style={{ flex: 1 }}>
-        {/* <Stack
+    <SafeAreaView style={{ flex: 1 }}>
+      {/* <Stack
       screenOptions={{
         headerShown: false,
         contentStyle: { backgroundColor: colors.gray[100] },
       }}
     /> */}
-        <Slot />
-        <ToastManager />
-      </SafeAreaView>
-    </AuthProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: colors.gray[100] },
+        }}
+      >
+        <Stack.Screen name='index' options={{ headerShown: true }} />
+      </Stack>
+      <ToastManager />
+    </SafeAreaView>
   )
 }

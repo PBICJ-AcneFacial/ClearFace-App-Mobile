@@ -1,59 +1,51 @@
 import { Input } from '@/components/ui/input'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { getErrorMessage } from '@/functions'
+import { LoginFormSchema, loginFormSchema } from '@/validators/login-validators'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { router } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
-import { StyleSheet, Text, View } from 'react-native'
-import {
-  SendCodeFormSchema,
-  sendCodeFormSchema,
-} from '@/validators/send-code-validators'
-import { BackButton } from '@/components/ui/back-button'
-import { sendCodeUser } from '@/services/http/auth/send-code-user'
-import { Loading } from '@/components/loading'
-import { colors } from '@/styles/theme'
-import { useState } from 'react'
+import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
 import { TextError } from '@/components/ui/text-error'
+import { useState } from 'react'
+import { Loading } from '@/components/loading'
+import { colors, fontFamily } from '@/styles/theme'
 import { Toast } from 'toastify-react-native'
+import { loginUser } from '@/services/http/auth/login-user'
 
-export default function SendCode() {
+export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
+
+  // const { signin, session } = useAuth()
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<SendCodeFormSchema>({
-    resolver: zodResolver(sendCodeFormSchema),
+  } = useForm<LoginFormSchema>({
+    resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      refCode: '',
-      newPassword: '',
+      email: '',
+      password: '',
     },
   })
 
-  async function handleSubmitFormSendCode(data: SendCodeFormSchema) {
+  async function handleSubmitFormLogin(data: LoginFormSchema) {
     setIsLoading(true)
-    const { refCode, newPassword } = data
-
     try {
-      const response = await sendCodeUser({
-        refCode,
-        newPassword,
-      })
-      console.log(data)
-      console.log('Senha recuperada com sucesso!')
-      console.log(response)
+      await loginUser(data)
+
       Toast.show({
         type: 'success',
-        text1: 'Senha recuperada com sucesso!',
+        text1: 'Login bem sucedido!',
         position: 'top',
         visibilityTime: 3000,
         autoHide: true,
       })
-      router.navigate('/(app)')
+      router.navigate('/(app)/home')
     } catch (error) {
       const errorMessage = getErrorMessage(error)
+      console.log(errorMessage)
       Toast.show({
         type: 'error',
         text1: errorMessage,
@@ -61,81 +53,60 @@ export default function SendCode() {
         visibilityTime: 3000,
         autoHide: true,
       })
-      console.log(errorMessage)
     } finally {
       setIsLoading(false)
     }
   }
 
+  // if (session) return <Redirect href='/(app)' />
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.infoArea}>
-          <BackButton onPress={() => router.back()} />
-          <Text style={styles.title}>Recuperação de senha</Text>
-        </View>
+        <Text style={styles.title}>Login</Text>
         <Text style={styles.subtitle}>
-          Insira o código que foi enviado no seu email e crie uma nova senha.
+          Email e senha necessários para a autenticação.
         </Text>
       </View>
       <View style={styles.inputContainer}>
         <Controller
           control={control}
-          rules={{
-            required: true,
-          }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              placeholder='Informe o código de verificação.'
+              placeholder='Informe seu email'
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
             />
           )}
-          name='refCode'
+          name='email'
         />
-        {errors.refCode && <TextError>{errors.refCode.message}</TextError>}
+        {errors.email && <TextError>{errors.email.message}</TextError>}
         <Controller
           control={control}
-          rules={{
-            required: true,
-          }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
-              placeholder='Crie uma nova senha.'
+              placeholder='Informe sua senha'
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
               secureTextEntry
             />
           )}
-          name='newPassword'
+          name='password'
         />
-        {errors.newPassword && (
-          <TextError>{errors.newPassword.message}</TextError>
-        )}
-        <Controller
-          control={control}
-          rules={{
-            required: true,
-          }}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder='Confirme a nova senha.'
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              secureTextEntry
-            />
-          )}
-          name='confirmNewPassword'
-        />
-        {errors.confirmNewPassword && (
-          <TextError>{errors.confirmNewPassword.message}</TextError>
-        )}
+        {errors.password && <TextError>{errors.password.message}</TextError>}
       </View>
+      <TouchableOpacity>
+        <Text
+          onPress={() => router.navigate('/auth/send-email')}
+          style={styles.forgotPassword}
+        >
+          Esqueci a senha
+        </Text>
+      </TouchableOpacity>
       <SubmitButton
-        onPress={handleSubmit(handleSubmitFormSendCode)}
+        onPress={handleSubmit(handleSubmitFormLogin)}
         disabled={isLoading || !isValid}
       >
         {isLoading ? (
@@ -144,9 +115,19 @@ export default function SendCode() {
           <SubmitButton.Title>Confirmar</SubmitButton.Title>
         )}
       </SubmitButton>
+      <Text style={styles.registerText}>
+        Ainda não tenho uma conta -{' '}
+        <Text
+          onPress={() => router.navigate('/auth/register')}
+          style={styles.registerLink}
+        >
+          Cadastrar-se
+        </Text>
+      </Text>
     </View>
   )
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -163,15 +144,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'left',
+    fontFamily: fontFamily.semiBold,
   },
   subtitle: {
     fontSize: 14,
     fontWeight: '600',
     color: '#52525B',
+    fontFamily: fontFamily.semiBold,
   },
   inputContainer: {
     width: '100%',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'column',
     gap: 16,
   },
@@ -190,9 +173,4 @@ const styles = StyleSheet.create({
   registerLink: {
     textDecorationLine: 'underline',
   },
-  infoArea: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  }
 })

@@ -19,7 +19,7 @@ import {
 import { s } from './styles'
 import { ProfileCard } from '../profile-card'
 import { getAllConsulations } from '@/services/http/consultations/get-all-consulations'
-import { useAuth } from '@/contexts/auth-context'
+// import { useAuth } from '@/contexts/auth-context'
 
 const screenWidth = Dimensions.get('window').width
 const DRAWER_WIDTH = 300

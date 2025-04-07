@@ -11,6 +11,7 @@ import { loginUser } from '@/services/http/auth/login-user'
 import { LoginFormSchema } from '@/validators/login-validators'
 import { ActivityIndicator, SafeAreaView, Text } from 'react-native'
 import { getProfile, User } from '@/services/http/user/get-profile'
+import { router } from 'expo-router'
 
 // 1. Interface para o contexto
 interface AuthContextType {
@@ -44,8 +45,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (userData) {
           setUser(userData)
         }
-
-        // console.log(userData)
       }
     } catch (error) {
       console.log('Erro ao verificar auth:', error)

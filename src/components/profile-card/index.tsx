@@ -10,15 +10,27 @@ import {
 import { styles } from './styles'
 import { BookOpen, ChartLine, LogOut, UserPen } from 'lucide-react-native'
 import { colors } from '@/styles/theme'
-import { useAuth } from '@/contexts/auth-context'
+// import { useAuth } from '@/contexts/auth-context'
 import { getInitials } from '@/functions'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+const signout = async () => {
+  // setLoading(true)
+  try {
+    await AsyncStorage.removeItem('@token')
+    console.log('Token removido!')
+    // setToken(null)
+  } catch (err) {
+    console.log('Erro ao deslogar:', err)
+  }
+}
 
 export function ProfileCard() {
   const [isDropdownOpen, setDropdownOpen] = useState(false)
   const [profileWidth, setProfileWidth] = useState(0)
-  const { signout, user } = useAuth()
+  // const { signout, user } = useAuth()
 
-  const userInitials = getInitials(user?.name)
+  const userInitials = getInitials('Ismael Henrique')
 
   const handleLayout = (event: LayoutChangeEvent) => {
     const { width } = event.nativeEvent.layout
@@ -27,7 +39,8 @@ export function ProfileCard() {
 
   const handleLogoutUser = async () => {
     await signout()
-    router.navigate('/login')
+
+    router.navigate('/auth/login')
   }
 
   return (
@@ -42,7 +55,7 @@ export function ProfileCard() {
           <Text style={styles.avatarText}>{userInitials}</Text>
         </View>
         <Text style={styles.username} numberOfLines={1}>
-          {user?.name}
+          Ismael
         </Text>
       </TouchableOpacity>
 
@@ -60,8 +73,8 @@ export function ProfileCard() {
         >
           <View style={[styles.dropdownMenu, { width: profileWidth }]}>
             <Text style={styles.dropdownLabel} numberOfLines={1}>
-              {/* ismael.henrique.dev@gmail.com */}
-              {user?.email}
+              ismael.henrique.dev@gmail.com
+              {/* {user?.email} */}
             </Text>
             <View style={styles.separator} />
 

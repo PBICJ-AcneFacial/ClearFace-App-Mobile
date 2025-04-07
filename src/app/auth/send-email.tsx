@@ -1,51 +1,51 @@
 import { Input } from '@/components/ui/input'
 import { SubmitButton } from '@/components/ui/submit-button'
 import { getErrorMessage } from '@/functions'
-import { LoginFormSchema, loginFormSchema } from '@/validators/login-validators'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Redirect, router } from 'expo-router'
+import { router } from 'expo-router'
 import { Controller, useForm } from 'react-hook-form'
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
-import { TextError } from '@/components/ui/text-error'
+import { StyleSheet, Text, View } from 'react-native'
+import {
+  SendEmailFormSchema,
+  sendEmailFormSchema,
+} from '@/validators/send-email-validators'
+import { BackButton } from '@/components/ui/back-button'
+import { sendEmailUser } from '@/services/http/auth/send-email-user'
 import { useState } from 'react'
 import { Loading } from '@/components/loading'
-import { colors, fontFamily } from '@/styles/theme'
+import { colors } from '@/styles/theme'
+import { TextError } from '@/components/ui/text-error'
 import { Toast } from 'toastify-react-native'
-import { useAuth } from '@/contexts/auth-context'
 
-export default function Login() {
+export default function SendEmail() {
   const [isLoading, setIsLoading] = useState(false)
-
-  const { signin, session } = useAuth()
-
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<LoginFormSchema>({
-    resolver: zodResolver(loginFormSchema),
+  } = useForm<SendEmailFormSchema>({
+    resolver: zodResolver(sendEmailFormSchema),
     defaultValues: {
       email: '',
-      password: '',
     },
   })
 
-  async function handleSubmitFormLogin(data: LoginFormSchema) {
+  async function handleSubmitFormSendEmail(data: SendEmailFormSchema) {
     setIsLoading(true)
     try {
-      await signin(data)
-      console.log('Session:', session)
+      await sendEmailUser(data)
+      console.log(data)
+      console.log('Código enviado por email')
       Toast.show({
         type: 'success',
-        text1: 'Login bem sucedido!',
+        text1: 'Código enviado com sucesso!',
         position: 'top',
         visibilityTime: 3000,
         autoHide: true,
       })
-      router.navigate('/(app)')
+      router.navigate('/auth/send-code')
     } catch (error) {
       const errorMessage = getErrorMessage(error)
-      console.log(errorMessage)
       Toast.show({
         type: 'error',
         text1: errorMessage,
@@ -53,25 +53,29 @@ export default function Login() {
         visibilityTime: 3000,
         autoHide: true,
       })
+      console.log(errorMessage)
     } finally {
       setIsLoading(false)
     }
   }
 
- 
-  // if (session) return <Redirect href='/(app)' />
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Login</Text>
+        <View style={styles.infoArea}>
+          <BackButton onPress={() => router.back()} />
+          <Text style={styles.title}>Recuperação de senha</Text>
+        </View>
         <Text style={styles.subtitle}>
-          Email e senha necessários para a autenticação.
+          Informe o email para recuperar sua senha.
         </Text>
       </View>
       <View style={styles.inputContainer}>
         <Controller
           control={control}
+          rules={{
+            required: true,
+          }}
           render={({ field: { onChange, onBlur, value } }) => (
             <Input
               placeholder='Informe seu email'
@@ -83,31 +87,10 @@ export default function Login() {
           name='email'
         />
         {errors.email && <TextError>{errors.email.message}</TextError>}
-        <Controller
-          control={control}
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder='Informe sua senha'
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              secureTextEntry
-            />
-          )}
-          name='password'
-        />
-        {errors.password && <TextError>{errors.password.message}</TextError>}
       </View>
-      <TouchableOpacity>
-        <Text
-          onPress={() => router.navigate('/send-email')}
-          style={styles.forgotPassword}
-        >
-          Esqueci a senha
-        </Text>
-      </TouchableOpacity>
+
       <SubmitButton
-        onPress={handleSubmit(handleSubmitFormLogin)}
+        onPress={handleSubmit(handleSubmitFormSendEmail)}
         disabled={isLoading || !isValid}
       >
         {isLoading ? (
@@ -116,18 +99,6 @@ export default function Login() {
           <SubmitButton.Title>Confirmar</SubmitButton.Title>
         )}
       </SubmitButton>
-      <Text style={styles.registerText}>
-        Ainda não tenho uma conta -{' '}
-        <Text
-          onPress={() => {
-            router.navigate('/register')
-            console.log('/register')
-          }}
-          style={styles.registerLink}
-        >
-          Cadastrar-se
-        </Text>
-      </Text>
     </View>
   )
 }
@@ -148,13 +119,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     textAlign: 'left',
-    fontFamily: fontFamily.semiBold,
   },
   subtitle: {
     fontSize: 14,
     fontWeight: '600',
     color: '#52525B',
-    fontFamily: fontFamily.semiBold,
   },
   inputContainer: {
     width: '100%',
@@ -176,5 +145,10 @@ const styles = StyleSheet.create({
   },
   registerLink: {
     textDecorationLine: 'underline',
+  },
+  infoArea: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
   },
 })
