@@ -1,16 +1,10 @@
+import { createConsultation } from '@/services/http/consultations/create-consultation'
 import {
-  createConsultation,
-  CreateConsultationResponse,
-} from '@/services/http/consultations/create-consultation'
-import { Consultation, getAllConsulations } from '@/services/http/consultations/get-all-consulations'
+  Consultation,
+  getAllConsulations,
+} from '@/services/http/consultations/get-all-consulations'
 import { router } from 'expo-router'
 import React, { createContext, useState, useContext, useEffect } from 'react'
-
-// interface Consultation {
-//   type: 'image'
-//   uri: string
-// }
-
 
 type AcneQuantity = {
   Nódulos: number
@@ -48,8 +42,13 @@ export interface AcneAnalysisResult {
   }
 }
 
+type Message = {
+  type: 'image'
+  uri: string
+}
+
 interface ConsultationContextData {
-  messages: []
+  messages: Message[]
   previewImage: string | null
   imageId: string
   setPreviewImage: (uri: string | null) => void
@@ -69,7 +68,7 @@ const ConsultationContext = createContext<ConsultationContextData>(
 export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [messages, setMessages] = useState<[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [imageId, setImageId] = useState('')
   const [resultData, setResultData] = useState<AcneAnalysisResult[]>([])
@@ -81,7 +80,6 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
   const addConsultation = (uri: string) => {
     setMessages((prev) => [...prev, { type: 'image', uri }])
     setPreviewImage(null)
-    console.log('Resultdata: ', resultData)
   }
 
   const clearConsultations = () => {
@@ -128,7 +126,7 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
         clearConsultations,
         updateResultData,
         handleCreateConsultation,
-        consultations
+        consultations,
       }}
     >
       {children}

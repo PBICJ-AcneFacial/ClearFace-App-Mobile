@@ -15,17 +15,15 @@ import { colors, fontFamily } from '@/styles/theme'
 import { uploadImageToConsultation } from '@/services/http/consultations/upload-image-to-consultation'
 import { uploadImage } from '@/services/http/images/upload-image'
 import { StyleSheet } from 'react-native'
-import { useConsultation } from '@/contexts/consultation-context'
+import {
+  useConsultation,
+  AcneAnalysisResult,
+} from '@/contexts/consultation-context'
 import { ResultCard } from '@/components/ui/result-card'
 import { useLocalSearchParams } from 'expo-router'
 
 export default function Home() {
   const { consultationId } = useLocalSearchParams()
-  // const [messages, setMessages] = React.useState<
-  //   { type: 'image'; uri: string }[]
-  // >([])
-  // const [previewImage, setPreviewImage] = React.useState<string | null>(null)
-  // const [imageId, setImageId] = React.useState('')
 
   const {
     addConsultation,
@@ -106,7 +104,23 @@ export default function Home() {
         const response = await uploadImageToConsultation(imageId)
 
         if (response) {
-          updateResultData(response) // Armazena os dados retornados
+          // Get the first result from the array
+          const firstResult = response.updatedAppointment.resultado[0]
+
+          if (firstResult) {
+            const acneAnalysisResult: AcneAnalysisResult = {
+              created_at: response.updatedAppointment.created_at,
+              id: response.updatedAppointment.id,
+              resultado: {
+                acne_quantity: firstResult.acne_quantity,
+                detected_classes: firstResult.detected_classes,
+                iga_score: firstResult.iga_score,
+                image: firstResult.image,
+                image_path: firstResult.image_path,
+              },
+            }
+            updateResultData(acneAnalysisResult)
+          }
         }
       } catch (err) {
         console.error('Erro ao criar consulta:', err)

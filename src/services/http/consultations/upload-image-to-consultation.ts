@@ -2,12 +2,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getAxiosStatusCode } from '@/functions'
 import { api } from '@/services/api'
 
-export async function uploadImageToConsultation(imageId: string) {
+export interface UploadImageResponse {
+  updatedAppointment: {
+    id: string
+    created_at: string
+    updated_at: string
+    resultado: any[]
+  }
+}
+
+export async function uploadImageToConsultation(imageId: string): Promise<UploadImageResponse> {
   try {
     const token = await AsyncStorage.getItem('@token')
     console.log(token)
 
-    const { data } = await api.put(
+    const { data } = await api.put<UploadImageResponse>(
       '/consultas/solve',
       {
         image_id: imageId,
@@ -32,3 +41,4 @@ export async function uploadImageToConsultation(imageId: string) {
     throw new Error('Erro ao enviar image')
   }
 }
+
