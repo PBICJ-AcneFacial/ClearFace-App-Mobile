@@ -18,16 +18,12 @@ import {
 // import { ProfileCard } from './profile-card'
 import { s } from './styles'
 import { ProfileCard } from '../profile-card'
-import { getAllConsulations } from '@/services/http/consultations/get-all-consulations'
-// import { useAuth } from '@/contexts/auth-context'
+import { useConsultation } from '@/contexts/consultation-context'
+import { formatDate, formatTime } from '@/utils/formmatters'
+
 
 const screenWidth = Dimensions.get('window').width
 const DRAWER_WIDTH = 300
-
-const consultations = [
-  { date: '20 de setembro', time: '19:00' },
-  { date: '20 de setembro', time: '19:00' },
-]
 
 export function Drawer({
   isOpen,
@@ -39,15 +35,6 @@ export function Drawer({
   children: React.ReactNode
 }) {
   const translateX = useSharedValue(isOpen ? 0 : -DRAWER_WIDTH)
-  
-  async function handleGetAllConsultations() {
-    const response = await getAllConsulations()
-    console.log('Consultas: ', response)
-  }
-
-  // useEffect(() => {
-  //   handleGetAllConsultations()
-  // }, [])
 
   useEffect(() => {
     translateX.value = withTiming(isOpen ? 0 : -DRAWER_WIDTH, { duration: 300 })
@@ -56,6 +43,8 @@ export function Drawer({
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
   }))
+
+  const { consultations } = useConsultation()
 
   return (
     <GestureHandlerRootView style={s.flex1}>
@@ -71,8 +60,8 @@ export function Drawer({
             keyExtractor={(_, index) => index.toString()}
             renderItem={({ item }) => (
               <View style={s.consultationItem}>
-                <Text style={s.consultationText}>{item.date}</Text>
-                <Text style={s.consultationText}>{item.time}</Text>
+                <Text style={s.consultationText}>{formatDate(item.created_at)}</Text>
+                <Text style={s.consultationText}>{formatTime(item.created_at)}</Text>
               </View>
             )}
           />

@@ -1,9 +1,32 @@
+import {
+  createConsultation,
+  CreateConsultationResponse,
+} from '@/services/http/consultations/create-consultation'
+import { Consultation, getAllConsulations } from '@/services/http/consultations/get-all-consulations'
 import { router } from 'expo-router'
-import React, { createContext, useState, useContext } from 'react'
+import React, { createContext, useState, useContext, useEffect } from 'react'
 
-interface Consultation {
-  type: 'image'
-  uri: string
+// interface Consultation {
+//   type: 'image'
+//   uri: string
+// }
+
+
+type AcneQuantity = {
+  Nódulos: number
+  Pápulas: number
+  Pústulas: number
+  'Cravos Pretos': number
+  'Cravos Brancos': number
+  'Manchas Escuras': number
+}
+
+type ConsultationResultsData = {
+  image: string
+  iga_score: number
+  image_path: string
+  acne_quantity: AcneQuantity
+  detected_classes: number[]
 }
 
 export interface AcneAnalysisResult {
@@ -26,7 +49,7 @@ export interface AcneAnalysisResult {
 }
 
 interface ConsultationContextData {
-  messages: Consultation[]
+  messages: []
   previewImage: string | null
   imageId: string
   setPreviewImage: (uri: string | null) => void
@@ -35,6 +58,8 @@ interface ConsultationContextData {
   clearConsultations: () => void
   resultData: AcneAnalysisResult[]
   updateResultData: (data: AcneAnalysisResult) => void
+  handleCreateConsultation: () => void
+  consultations: Consultation[]
 }
 
 const ConsultationContext = createContext<ConsultationContextData>(
@@ -44,10 +69,14 @@ const ConsultationContext = createContext<ConsultationContextData>(
 export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [messages, setMessages] = useState<Consultation[]>([])
+  const [messages, setMessages] = useState<[]>([])
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [imageId, setImageId] = useState('')
   const [resultData, setResultData] = useState<AcneAnalysisResult[]>([])
+  const [consultationResults, setConsultationResults] = useState<
+    ConsultationResultsData[]
+  >([])
+  const [consultations, setConsultations] = useState<Consultation[]>([])
 
   const addConsultation = (uri: string) => {
     setMessages((prev) => [...prev, { type: 'image', uri }])
@@ -59,11 +88,31 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
     setMessages([])
     setPreviewImage(null)
     setImageId('')
-    router.navigate('/')
+    router.navigate('/(app)/home')
   }
 
   const updateResultData = (data: AcneAnalysisResult) => {
     setResultData((prev) => [...prev, data])
+  }
+
+  async function fetchConsultations() {
+    const response = await getAllConsulations()
+
+    setConsultations(response)
+  }
+
+  useEffect(() => {
+    fetchConsultations()
+  }, [])
+
+  async function handleCreateConsultation() {
+    clearConsultations()
+    const response = await createConsultation()
+    console.log('Consulta criada! - Id:', response.id)
+    router.navigate({
+      pathname: '/(app)/home',
+      params: { consultationId: response.id },
+    })
   }
 
   return (
@@ -78,6 +127,8 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
         addConsultation,
         clearConsultations,
         updateResultData,
+        handleCreateConsultation,
+        consultations
       }}
     >
       {children}

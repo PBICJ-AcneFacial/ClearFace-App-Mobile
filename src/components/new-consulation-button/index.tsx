@@ -4,10 +4,10 @@ import { styles } from './styles'
 import { useConsultation } from '@/contexts/consultation-context'
 
 export function NewConsultationButton() {
-  const { clearConsultations } = useConsultation()
+  const { handleCreateConsultation } = useConsultation()
 
   return (
-    <TouchableOpacity onPress={clearConsultations} style={styles.button}>
+    <TouchableOpacity onPress={handleCreateConsultation} style={styles.button}>
       <Text style={styles.buttonText}>Nova</Text>
       <Plus color='#fff' />
     </TouchableOpacity>

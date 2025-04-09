@@ -12,13 +12,15 @@ import {
 } from 'react-native'
 import { ImageUpIcon } from 'lucide-react-native'
 import { colors, fontFamily } from '@/styles/theme'
-import { createConsultation } from '@/services/http/consultations/create-consultation'
+import { uploadImageToConsultation } from '@/services/http/consultations/upload-image-to-consultation'
 import { uploadImage } from '@/services/http/images/upload-image'
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native'
 import { useConsultation } from '@/contexts/consultation-context'
 import { ResultCard } from '@/components/ui/result-card'
+import { useLocalSearchParams } from 'expo-router'
 
 export default function Home() {
+  const { consultationId } = useLocalSearchParams()
   // const [messages, setMessages] = React.useState<
   //   { type: 'image'; uri: string }[]
   // >([])
@@ -73,11 +75,13 @@ export default function Home() {
           )
         )
         setPreviewImage(assets[0].uri)
+        formData.append('appointment_id', consultationId as string)
 
         try {
           const response = await uploadImage(formData)
 
           if (response) {
+            console.log('Id da imagem: ', response.image.id)
             setImageId(response.image.id)
             Alert.alert('Sucesso 🎉', 'Sua imagem foi enviada com sucesso!')
           } else {
@@ -99,8 +103,7 @@ export default function Home() {
       setPreviewImage(null)
 
       try {
-        const response = await createConsultation(imageId)
-        console.log('Consulta criada!', response)
+        const response = await uploadImageToConsultation(imageId)
 
         if (response) {
           updateResultData(response) // Armazena os dados retornados
@@ -185,8 +188,6 @@ export default function Home() {
   )
 }
 
-
-
 const styles = StyleSheet.create({
   background: {
     flex: 1,
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 10,
     maxWidth: '75%',
-    marginTop: 16
+    marginTop: 16,
   },
   messageImage: {
     width: 200,
@@ -261,6 +262,6 @@ const styles = StyleSheet.create({
   },
   messageArea: {
     width: '100%',
-    padding: 8
-  }
+    padding: 8,
+  },
 })

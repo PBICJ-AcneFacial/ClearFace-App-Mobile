@@ -1,19 +1,28 @@
 import { api } from '@/services/api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export async function getAllConsulations() {
+export type Consultation = {
+  id: string
+  user_id: string
+  created_at: string
+  // resultado: Record<string, any>
+}
+
+export async function getAllConsulations(): Promise<Consultation[]> {
   try {
     const token = await AsyncStorage.getItem('@token')
-    const response = await api.get('/consultas/user', {
+
+    const {data } = await api.get<Consultation[]>('/consultas/user', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
 
-    console.log(response)
+    console.log('Todas as consultas: ', data)
 
-    return response.data
+    return data
   } catch (error) {
-    console.log(error)
+    console.error('Erro ao buscar consultas:', error)
+    throw new Error('fecth error')
   }
 }
