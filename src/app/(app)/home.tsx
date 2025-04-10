@@ -15,12 +15,11 @@ import { colors, fontFamily } from '@/styles/theme'
 import { uploadImageToConsultation } from '@/services/http/consultations/upload-image-to-consultation'
 import { uploadImage } from '@/services/http/images/upload-image'
 import { StyleSheet } from 'react-native'
-import {
-  useConsultation,
-  AcneAnalysisResult,
-} from '@/contexts/consultation-context'
+import { useConsultation } from '@/contexts/consultation-context'
 import { ResultCard } from '@/components/ui/result-card'
 import { useLocalSearchParams } from 'expo-router'
+import { useEffect } from 'react'
+import { ConsultationResult } from '@/services/http/consultations/get-consultation-by-id'
 
 export default function Home() {
   const { consultationId } = useLocalSearchParams()
@@ -32,9 +31,16 @@ export default function Home() {
     messages,
     previewImage,
     setPreviewImage,
-    resultData,
+    consultationResults,
     updateResultData,
+    loadConsultation,
   } = useConsultation()
+
+  useEffect(() => {
+    if (consultationId) {
+      loadConsultation(consultationId as string)
+    }
+  }, [consultationId])
 
   const handlePickerImage = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -108,18 +114,13 @@ export default function Home() {
           const firstResult = response.updatedAppointment.resultado[0]
 
           if (firstResult) {
-            const acneAnalysisResult: AcneAnalysisResult = {
-              created_at: response.updatedAppointment.created_at,
-              id: response.updatedAppointment.id,
-              resultado: {
-                acne_quantity: firstResult.acne_quantity,
-                detected_classes: firstResult.detected_classes,
-                iga_score: firstResult.iga_score,
-                image: firstResult.image,
-                image_path: firstResult.image_path,
-              },
+            const consultationResult: ConsultationResult = {
+              acne_quantity: firstResult.acne_quantity,
+              iga_score: firstResult.iga_score,
+              image: firstResult.image,
+              image_path: firstResult.image_path,
             }
-            updateResultData(acneAnalysisResult)
+            updateResultData(consultationResult)
           }
         }
       } catch (err) {
@@ -139,10 +140,10 @@ export default function Home() {
         <View style={styles.container}>
           <ScrollView style={styles.scrollView}>
             {messages.map((msg, index) => {
-              const result = resultData[index]
+              const result = consultationResults[index]
 
               if (result) {
-                console.log('Image path:', result.resultado.image)
+                console.log('Image path:', result.image)
               }
 
               return (
@@ -158,7 +159,7 @@ export default function Home() {
                       <View style={styles.messageResultContainer}>
                         <Image
                           source={{
-                            uri: `http://200.129.17.134:3456${result.resultado.image_path}`,
+                            uri: `http://200.129.17.134:3456${result.image_path}`,
                           }}
                           style={styles.messageImage}
                         />

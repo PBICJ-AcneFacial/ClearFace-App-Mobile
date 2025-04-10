@@ -1,11 +1,34 @@
 import { api } from '@/services/api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export type Consultation = {
+export type ConsultationResult = {
+  acne_quantity: {
+    'Cravos Brancos': number
+    'Cravos Pretos': number
+    'Manchas Escuras': number
+    Nódulos: number
+    Pápulas: number
+    Pústulas: number
+  }
+  iga_score: number
+  image: string
+  image_path: string
+}
+
+type ImageClass = {
+  appointmentId: string
   id: string
-  user_id: string
-  created_at: string
-  // resultado: Record<string, any>
+  type: 'uploaded' | 'detected'
+  url: string
+}
+
+export type Consultation = {
+  appointment: {
+    id: string
+    created_at: string
+    resultado: ConsultationResult[]
+  }
+  imageClassList: ImageClass[]
 }
 
 export async function getConsultationById(
@@ -14,11 +37,14 @@ export async function getConsultationById(
   try {
     const token = await AsyncStorage.getItem('@token')
 
-    const { data } = await api.get<Consultation>(`/consultas/${consultationId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const { data } = await api.get<Consultation>(
+      `/consultas/${consultationId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
 
     console.log('Pegando Consulta específica: ', data)
 

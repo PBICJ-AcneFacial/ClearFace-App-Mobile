@@ -1,10 +1,10 @@
 import { Text, View } from 'react-native'
 import { styles } from './styles'
-import { AcneAnalysisResult } from '@/contexts/consultation-context'
+import { ConsultationResult } from '@/services/http/consultations/get-consultation-by-id'
 import { getIgaLevel } from '@/functions'
 
 interface ResultCardProps {
-  result: AcneAnalysisResult
+  result: ConsultationResult
 }
 
 export const ResultCard: React.FC<ResultCardProps> = ({ result }) => {
@@ -17,30 +17,26 @@ export const ResultCard: React.FC<ResultCardProps> = ({ result }) => {
       <View style={styles.itemRow}>
         <Text style={styles.label}>Classificação:</Text>
         <Text style={styles.valueHighlight}>
-          {getIgaLevel(result.resultado.iga_score)}
+          {getIgaLevel(result.iga_score)}
         </Text>
       </View>
 
       <View style={styles.itemRow}>
         <Text style={styles.label}>Comedões:</Text>
         <Text style={styles.value}>
-          {result.resultado.acne_quantity['Cravos Brancos'] +
-            result.resultado.acne_quantity['Cravos Pretos']}
+          {result.acne_quantity['Cravos Brancos'] +
+            result.acne_quantity['Cravos Pretos']}
         </Text>
       </View>
 
       <View style={styles.itemRow}>
         <Text style={styles.label}>Pústulas:</Text>
-        <Text style={styles.value}>
-          {result.resultado.acne_quantity['Pústulas']}
-        </Text>
+        <Text style={styles.value}>{result.acne_quantity['Pústulas']}</Text>
       </View>
 
       <View style={styles.itemRow}>
         <Text style={styles.label}>Pápulas:</Text>
-        <Text style={styles.value}>
-          {result.resultado.acne_quantity['Pápulas']}
-        </Text>
+        <Text style={styles.value}>{result.acne_quantity['Pápulas']}</Text>
       </View>
 
       <Text style={styles.precisionText}>

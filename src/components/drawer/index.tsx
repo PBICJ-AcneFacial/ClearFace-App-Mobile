@@ -20,7 +20,7 @@ import { s } from './styles'
 import { ProfileCard } from '../profile-card'
 import { useConsultation } from '@/contexts/consultation-context'
 import { formatDate, formatTime } from '@/utils/formmatters'
-
+import { router } from 'expo-router'
 
 const screenWidth = Dimensions.get('window').width
 const DRAWER_WIDTH = 300
@@ -46,6 +46,14 @@ export function Drawer({
 
   const { consultations } = useConsultation()
 
+  const handleConsultationClick = (consultationId: string) => {
+    onClose()
+    router.navigate({
+      pathname: '/(app)/home',
+      params: { consultationId },
+    })
+  }
+
   return (
     <GestureHandlerRootView style={s.flex1}>
       <View style={s.flex1}>{children}</View>
@@ -57,12 +65,19 @@ export function Drawer({
           <Text style={s.headerText}>Últimas consultas</Text>
           <FlatList
             data={consultations}
-            keyExtractor={(_, index) => index.toString()}
+            keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <View style={s.consultationItem}>
-                <Text style={s.consultationText}>{formatDate(item.created_at)}</Text>
-                <Text style={s.consultationText}>{formatTime(item.created_at)}</Text>
-              </View>
+              <TouchableOpacity
+                style={s.consultationItem}
+                onPress={() => handleConsultationClick(item.id)}
+              >
+                <Text style={s.consultationText}>
+                  {formatDate(item.created_at)}
+                </Text>
+                <Text style={s.consultationText}>
+                  {formatTime(item.created_at)}
+                </Text>
+              </TouchableOpacity>
             )}
           />
           <ProfileCard />

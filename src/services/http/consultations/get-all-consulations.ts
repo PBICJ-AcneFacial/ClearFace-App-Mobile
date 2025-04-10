@@ -5,24 +5,31 @@ export type Consultation = {
   id: string
   user_id: string
   created_at: string
-  // resultado: Record<string, any>
+  updated_at: string
 }
 
-export async function getAllConsulations(): Promise<Consultation[]> {
+export type GetAllConsulationsResponse = {
+  manyResult: Consultation[]
+}
+
+export async function getAllConsulations(): Promise<GetAllConsulationsResponse> {
   try {
     const token = await AsyncStorage.getItem('@token')
 
-    const {data } = await api.get<Consultation[]>('/consultas/user', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const { data } = await api.get<GetAllConsulationsResponse>(
+      '/consultas/user',
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
 
     console.log('Todas as consultas: ', data)
 
     return data
   } catch (error) {
     console.error('Erro ao buscar consultas:', error)
-    throw new Error('fecth error')
+    throw new Error('fetch error')
   }
 }

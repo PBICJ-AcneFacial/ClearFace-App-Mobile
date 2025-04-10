@@ -3,48 +3,23 @@ import {
   Consultation,
   getAllConsulations,
 } from '@/services/http/consultations/get-all-consulations'
+import {
+  ConsultationResult,
+  getConsultationById,
+} from '@/services/http/consultations/get-consultation-by-id'
 import { router } from 'expo-router'
 import React, { createContext, useState, useContext, useEffect } from 'react'
-
-type AcneQuantity = {
-  Nódulos: number
-  Pápulas: number
-  Pústulas: number
-  'Cravos Pretos': number
-  'Cravos Brancos': number
-  'Manchas Escuras': number
-}
-
-type ConsultationResultsData = {
-  image: string
-  iga_score: number
-  image_path: string
-  acne_quantity: AcneQuantity
-  detected_classes: number[]
-}
-
-export interface AcneAnalysisResult {
-  created_at: string
-  id: string
-  resultado: {
-    acne_quantity: {
-      'Cravos Brancos': number
-      'Cravos Pretos': number
-      'Manchas Escuras': number
-      Nódulos: number
-      Pápulas: number
-      Pústulas: number
-    }
-    detected_classes: number[]
-    iga_score: number
-    image: string
-    image_path: string
-  }
-}
 
 type Message = {
   type: 'image'
   uri: string
+}
+
+type ImageClass = {
+  appointmentId: string
+  id: string
+  type: 'uploaded' | 'detected'
+  url: string
 }
 
 interface ConsultationContextData {
@@ -55,10 +30,11 @@ interface ConsultationContextData {
   setImageId: (id: string) => void
   addConsultation: (uri: string) => void
   clearConsultations: () => void
-  resultData: AcneAnalysisResult[]
-  updateResultData: (data: AcneAnalysisResult) => void
+  consultationResults: ConsultationResult[]
+  updateResultData: (data: ConsultationResult) => void
   handleCreateConsultation: () => void
   consultations: Consultation[]
+  loadConsultation: (consultationId: string) => Promise<void>
 }
 
 const ConsultationContext = createContext<ConsultationContextData>(
@@ -71,9 +47,8 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
   const [messages, setMessages] = useState<Message[]>([])
   const [previewImage, setPreviewImage] = useState<string | null>(null)
   const [imageId, setImageId] = useState('')
-  const [resultData, setResultData] = useState<AcneAnalysisResult[]>([])
   const [consultationResults, setConsultationResults] = useState<
-    ConsultationResultsData[]
+    ConsultationResult[]
   >([])
   const [consultations, setConsultations] = useState<Consultation[]>([])
 
@@ -86,17 +61,50 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
     setMessages([])
     setPreviewImage(null)
     setImageId('')
+    setConsultationResults([])
     router.navigate('/(app)/home')
   }
 
-  const updateResultData = (data: AcneAnalysisResult) => {
-    setResultData((prev) => [...prev, data])
+  const updateResultData = (data: ConsultationResult) => {
+    setConsultationResults((prev) => [...prev, data])
+  }
+
+  const loadConsultation = async (consultationId: string) => {
+    try {
+      const response = await getConsultationById(consultationId)
+
+      if (
+        response.appointment.resultado &&
+        response.appointment.resultado.length > 0
+      ) {
+        // Load results
+        const results = response.appointment.resultado.map((result) => ({
+          acne_quantity: result.acne_quantity,
+          iga_score: result.iga_score,
+          image: result.image,
+          image_path: result.image_path,
+        }))
+
+        setConsultationResults(results)
+
+        // Load messages with both uploaded and detected images
+        const messages = response.imageClassList.map((image) => ({
+          type: 'image' as const,
+          uri: `http://200.129.17.134:3456${image.url}`,
+        }))
+
+        setMessages(messages)
+      }
+    } catch (error) {
+      console.error('Erro ao carregar consulta:', error)
+    }
   }
 
   async function fetchConsultations() {
     const response = await getAllConsulations()
 
-    setConsultations(response)
+    setConsultations(response.manyResult)
+    console.log(consultations)
   }
 
   useEffect(() => {
@@ -116,7 +124,6 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <ConsultationContext.Provider
       value={{
-        resultData,
         messages,
         previewImage,
         imageId,
@@ -124,9 +131,11 @@ export const ConsultationProvider: React.FC<{ children: React.ReactNode }> = ({
         setImageId,
         addConsultation,
         clearConsultations,
+        consultationResults,
         updateResultData,
         handleCreateConsultation,
         consultations,
+        loadConsultation,
       }}
     >
       {children}

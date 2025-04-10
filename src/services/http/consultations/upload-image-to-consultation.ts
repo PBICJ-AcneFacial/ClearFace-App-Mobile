@@ -1,13 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getAxiosStatusCode } from '@/functions'
 import { api } from '@/services/api'
+import { ConsultationResult } from './get-consultation-by-id'
 
 export interface UploadImageResponse {
   updatedAppointment: {
     id: string
     created_at: string
     updated_at: string
-    resultado: any[]
+    resultado: ConsultationResult[]
   }
 }
 
